@@ -20,7 +20,7 @@
 - **Framework:** [Next.js](https://nextjs.org/) / React
 - **Styling:** [Tailwind CSS](https://tailwindcss.com/)
 - **Drag & Drop:** `@hello-pangea/dnd` / `dnd-kit`
-- **PDF Generation:** `@react-pdf/renderer`
+- **PDF & Document Engine:** LaTeX (`pdfTeX`) with live `.tex` source exporter and vector PDF compilation
 - **AI Integration:** OpenAI API / Vercel AI SDK
 
 ---

@@ -47,6 +47,27 @@ export interface SkillCategory {
   items: string[];
 }
 
+export interface TypographySettings {
+  fontFamily: string; // 'Helvetica' | 'Times-Roman' | 'Courier' or custom font family name
+  customFontBase64?: string; // Data URL or Base64 of user uploaded TTF/OTF
+  customFontName?: string;
+  nameSize: number; // default 22
+  jobTitleSize: number; // default 12
+  sectionTitleSize: number; // default 11
+  bodySize: number; // default 9.5
+  lineHeight: number; // default 1.4
+  // Style toggles
+  showSectionLines: boolean; // default true (user can disable lines)
+  showHeaderLine: boolean; // default true
+  primaryColor: string; // default '#0284c7'
+  nameBold: boolean; // default true
+  nameItalic: boolean; // default false
+  jobTitleBold: boolean; // default true
+  jobTitleItalic: boolean; // default false
+  sectionTitleBold: boolean; // default true
+  sectionTitleItalic: boolean; // default false
+}
+
 export interface ResumeData {
   title: string;
   personalInfo: PersonalInfo;
@@ -56,7 +77,26 @@ export interface ResumeData {
   projects: Project[];
   skills: SkillCategory[];
   sectionOrder: string[]; // e.g. ['summary', 'work', 'skills', 'projects', 'education']
+  typography: TypographySettings;
 }
+
+export const defaultTypography: TypographySettings = {
+  fontFamily: "Helvetica",
+  nameSize: 22,
+  jobTitleSize: 12,
+  sectionTitleSize: 11,
+  bodySize: 9.5,
+  lineHeight: 1.4,
+  showSectionLines: true,
+  showHeaderLine: true,
+  primaryColor: "#0284c7",
+  nameBold: true,
+  nameItalic: false,
+  jobTitleBold: true,
+  jobTitleItalic: false,
+  sectionTitleBold: true,
+  sectionTitleItalic: false,
+};
 
 export const initialResumeData: ResumeData = {
   title: "Software Engineer Resume",
@@ -140,4 +180,5 @@ export const initialResumeData: ResumeData = {
     },
   ],
   sectionOrder: ["summary", "workExperiences", "skills", "projects", "educations"],
+  typography: defaultTypography,
 };
