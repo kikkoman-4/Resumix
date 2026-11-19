@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useMemo } from "react";
+import React, { useState, useRef, useMemo, useEffect } from "react";
 import { ResumeData } from "@/types/resume";
 import { generateLatexDocument } from "@/lib/latexGenerator";
 import {
@@ -20,6 +20,7 @@ import {
   Replace,
   CaseSensitive,
   X,
+  WrapText,
 } from "lucide-react";
 
 interface Props {
@@ -49,6 +50,24 @@ export default function LatexCodeEditor({
   const [cursorPos, setCursorPos] = useState({ line: 1, col: 1 });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const lineNumbersRef = useRef<HTMLDivElement>(null);
+  const shadowMeasureRef = useRef<HTMLDivElement>(null);
+
+  // Word wrap state (enabled by default, persisted in localStorage)
+  const [wordWrap, setWordWrap] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("resumix_code_word_wrap");
+        if (saved !== null) {
+          return saved === "true";
+        }
+      } catch {
+        // fallback
+      }
+    }
+    return true;
+  });
+
+  const [lineHeights, setLineHeights] = useState<number[]>([]);
 
   // Find & Replace state
   const [showSearch, setShowSearch] = useState(false);
@@ -87,6 +106,40 @@ export default function LatexCodeEditor({
 
   // Safe match index
   const safeMatchIdx = matches.length > 0 ? Math.min(currentMatchIdx, matches.length - 1) : 0;
+
+  // Toggle word wrap
+  const toggleWordWrap = () => {
+    setWordWrap((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem("resumix_code_word_wrap", String(next));
+      } catch {
+        // ignore
+      }
+      return next;
+    });
+  };
+
+  // Synchronize dynamic line heights for the gutter when word wrap is enabled
+  useEffect(() => {
+    if (!wordWrap) {
+      return;
+    }
+
+    const measureHeights = () => {
+      const container = shadowMeasureRef.current;
+      if (!container) return;
+      const children = container.children;
+      const heights = new Array(children.length);
+      for (let i = 0; i < children.length; i++) {
+        heights[i] = (children[i] as HTMLElement).offsetHeight;
+      }
+      setLineHeights(heights);
+    };
+
+    const animId = requestAnimationFrame(measureHeights);
+    return () => cancelAnimationFrame(animId);
+  }, [code, wordWrap]);
 
   // Synchronize scrolling between textarea and line numbers gutter
   const handleScroll = (e: React.UIEvent<HTMLTextAreaElement>) => {
@@ -165,8 +218,15 @@ export default function LatexCodeEditor({
     onChange(newCode);
   };
 
-  // Keyboard shortcut handlers (Tab, Shift+Tab, Ctrl+Enter, Ctrl+F, Ctrl+H)
+  // Keyboard shortcut handlers (Tab, Shift+Tab, Ctrl+Enter, Ctrl+F, Ctrl+H, Alt+Z)
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Alt+Z -> Toggle Word Wrap
+    if (e.altKey && (e.key === "z" || e.key === "Z")) {
+      e.preventDefault();
+      toggleWordWrap();
+      return;
+    }
+
     // Ctrl+F or Cmd+F -> Open Find Bar
     if ((e.ctrlKey || e.metaKey) && (e.key === "f" || e.key === "F")) {
       e.preventDefault();
@@ -319,13 +379,27 @@ export default function LatexCodeEditor({
               )}
             </div>
             <p className="text-[11px] text-zinc-500 truncate">
-              Direct TeX markup • Ctrl+F to Find • Ctrl+Enter to compile
+              Direct TeX markup • Ctrl+F to Find • Alt+Z for Word Wrap
             </p>
           </div>
         </div>
 
         {/* Action Buttons */}
         <div className="flex items-center gap-1.5 shrink-0">
+          {/* Word Wrap Toggle */}
+          <button
+            onClick={toggleWordWrap}
+            className={`flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-lg border transition ${
+              wordWrap
+                ? "bg-sky-600/30 border-sky-500 text-sky-300"
+                : "text-zinc-400 hover:text-zinc-200 bg-zinc-800/80 hover:bg-zinc-800 border-zinc-700"
+            }`}
+            title="Toggle Word Wrap (Alt+Z)"
+          >
+            <WrapText className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Wrap</span>
+          </button>
+
           {/* Find Button */}
           <button
             onClick={() => {
@@ -649,6 +723,9 @@ export default function LatexCodeEditor({
           {Array.from({ length: linesCount }).map((_, i) => (
             <div
               key={i}
+              style={{
+                height: wordWrap && lineHeights[i] ? `${lineHeights[i]}px` : undefined,
+              }}
               className={`${
                 cursorPos.line === i + 1 ? "text-sky-400 font-bold" : ""
               }`}
@@ -672,8 +749,25 @@ export default function LatexCodeEditor({
           onKeyUp={updateCursorPosition}
           onKeyDown={handleKeyDown}
           spellCheck={false}
-          className="flex-1 h-full p-3 bg-zinc-950 text-zinc-100 font-mono text-xs leading-[1.5rem] resize-none outline-none overflow-auto whitespace-pre selection:bg-sky-800/50"
+          className={`flex-1 h-full p-3 bg-zinc-950 text-zinc-100 font-mono text-xs leading-[1.5rem] resize-none outline-none selection:bg-sky-800/50 ${
+            wordWrap
+              ? "whitespace-pre-wrap break-words overflow-y-auto overflow-x-hidden"
+              : "whitespace-pre overflow-auto"
+          }`}
         />
+
+        {/* Invisible shadow container to mirror wrapped line heights */}
+        {wordWrap && (
+          <div
+            ref={shadowMeasureRef}
+            aria-hidden="true"
+            className="absolute top-0 left-12 right-0 p-3 font-mono text-xs leading-[1.5rem] whitespace-pre-wrap break-words opacity-0 pointer-events-none -z-10"
+          >
+            {code.split("\n").map((line, idx) => (
+              <div key={idx}>{line || "\u00A0"}</div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* 5. Compile Error Notification (if compile fails) */}
@@ -701,6 +795,20 @@ export default function LatexCodeEditor({
         </div>
 
         <div className="flex items-center gap-2 text-zinc-500">
+          <button
+            onClick={toggleWordWrap}
+            className="hover:text-zinc-300 transition cursor-pointer flex items-center gap-1"
+            title="Toggle Word Wrap (Alt+Z)"
+          >
+            <WrapText className="w-3 h-3 text-zinc-400" />
+            <span>
+              Wrap:{" "}
+              <strong className={wordWrap ? "text-sky-400" : "text-zinc-400"}>
+                {wordWrap ? "On" : "Off"}
+              </strong>
+            </span>
+          </button>
+          <span>•</span>
           <span>Ctrl+F: Find</span>
           <span>•</span>
           <span>Tab: Indent</span>
