@@ -17,11 +17,12 @@ import {
 
 interface Props {
   resume: ResumeData;
+  customLatex?: string;
 }
 
 const emptySubscribe = () => () => {};
 
-export default function RealPdfViewer({ resume }: Props) {
+export default function RealPdfViewer({ resume, customLatex }: Props) {
   const isClient = useSyncExternalStore(
     emptySubscribe,
     () => true,
@@ -35,10 +36,10 @@ export default function RealPdfViewer({ resume }: Props) {
   const [showLatexModal, setShowLatexModal] = useState(false);
   const activeBlobRef = useRef<string | null>(null);
 
-  // Compute live LaTeX markup
+  // Compute live LaTeX markup (respecting custom code if provided)
   const latexSource = useMemo(() => {
-    return generateLatexDocument(resume);
-  }, [resume]);
+    return customLatex !== undefined ? customLatex : generateLatexDocument(resume);
+  }, [resume, customLatex]);
 
   // Debounced compilation to pdflatex backend
   useEffect(() => {
@@ -50,12 +51,16 @@ export default function RealPdfViewer({ resume }: Props) {
       setCompileError(null);
 
       try {
+        const payload = customLatex !== undefined
+          ? { latexCode: customLatex }
+          : { resume };
+
         const response = await fetch("/api/compile-latex", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ resume }),
+          body: JSON.stringify(payload),
         });
 
         if (isAborted) return;
@@ -96,7 +101,7 @@ export default function RealPdfViewer({ resume }: Props) {
       isAborted = true;
       clearTimeout(timer);
     };
-  }, [resume, isClient]);
+  }, [resume, customLatex, isClient]);
 
   // Cleanup blob URL on unmount
   useEffect(() => {
@@ -135,10 +140,14 @@ export default function RealPdfViewer({ resume }: Props) {
     setIsCompiling(true);
     setCompileError(null);
     try {
+      const payload = customLatex !== undefined
+        ? { latexCode: customLatex }
+        : { resume };
+
       const response = await fetch("/api/compile-latex", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ resume }),
+        body: JSON.stringify(payload),
       });
       if (!response.ok) {
         const errData = await response.json().catch(() => null);
@@ -176,7 +185,9 @@ export default function RealPdfViewer({ resume }: Props) {
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-800/80">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="font-semibold text-[11px]">LaTeX Document Builder</span>
+            <span className="font-semibold text-[11px]">
+              {customLatex !== undefined ? "Custom LaTeX Engine" : "LaTeX Document Builder"}
+            </span>
           </div>
           <span className="text-[11px] text-zinc-400 hidden sm:inline">• pdfTeX Engine</span>
           {isCompiling && (

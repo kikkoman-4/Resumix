@@ -11,6 +11,8 @@ import {
 } from "@/types/resume";
 import DraggableSectionOrder from "@/components/DraggableSectionOrder";
 import TypographyModal from "@/components/TypographyModal";
+import LatexCodeEditor from "@/components/LatexCodeEditor";
+import { generateLatexDocument } from "@/lib/latexGenerator";
 import { 
   User, 
   FileText, 
@@ -24,7 +26,9 @@ import {
   Plus, 
   Trash2, 
   Wand2, 
-  Sparkles
+  Sparkles,
+  Terminal,
+  PenTool
 } from "lucide-react";
 
 const LOCAL_STORAGE_KEY = "resumix_current_resume_v1";
@@ -73,6 +77,56 @@ export default function ResumixStudio() {
     return initialResumeData;
   });
   const [activeTab, setActiveTab] = useState<SidebarTab>("personal");
+  const [editorMode, setEditorMode] = useState<"form" | "code">("form");
+  const [editorWidth, setEditorWidth] = useState<number>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("resumix_editor_width");
+        if (saved) {
+          const val = parseInt(saved, 10);
+          if (!isNaN(val) && val >= 340 && val <= 1800) {
+            return val;
+          }
+        }
+      } catch {
+        // fallback
+      }
+    }
+    return 520;
+  });
+  const [isResizing, setIsResizing] = useState<boolean>(false);
+
+  const startResizing = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsResizing(true);
+    const startX = e.clientX;
+    const startWidth = editorWidth;
+    let latestWidth = startWidth;
+
+    const onMouseMove = (moveEvent: MouseEvent) => {
+      const delta = moveEvent.clientX - startX;
+      const minWidth = 340;
+      const maxWidth = Math.max(480, window.innerWidth - 380);
+      const newWidth = Math.min(maxWidth, Math.max(minWidth, startWidth + delta));
+      latestWidth = newWidth;
+      setEditorWidth(newWidth);
+    };
+
+    const onMouseUp = () => {
+      setIsResizing(false);
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+      try {
+        localStorage.setItem("resumix_editor_width", String(latestWidth));
+      } catch {
+        // ignore
+      }
+    };
+
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+  };
+
   const [enhancingId, setEnhancingId] = useState<string | null>(null);
 
   // Auto-save to LocalStorage
@@ -131,10 +185,13 @@ export default function ResumixStudio() {
           {/* Navigation Section Icons */}
           <nav className="flex flex-col items-center gap-2 w-full px-2">
             <button
-              onClick={() => setActiveTab("personal")}
+              onClick={() => {
+                setActiveTab("personal");
+                setEditorMode("form");
+              }}
               title="Personal Details"
               className={`w-11 h-11 rounded-xl flex items-center justify-center transition ${
-                activeTab === "personal"
+                editorMode === "form" && activeTab === "personal"
                   ? "bg-blue-600 text-white shadow"
                   : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
               }`}
@@ -143,10 +200,13 @@ export default function ResumixStudio() {
             </button>
 
             <button
-              onClick={() => setActiveTab("summary")}
+              onClick={() => {
+                setActiveTab("summary");
+                setEditorMode("form");
+              }}
               title="Professional Summary"
               className={`w-11 h-11 rounded-xl flex items-center justify-center transition ${
-                activeTab === "summary"
+                editorMode === "form" && activeTab === "summary"
                   ? "bg-blue-600 text-white shadow"
                   : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
               }`}
@@ -155,10 +215,13 @@ export default function ResumixStudio() {
             </button>
 
             <button
-              onClick={() => setActiveTab("experience")}
+              onClick={() => {
+                setActiveTab("experience");
+                setEditorMode("form");
+              }}
               title="Work Experience"
               className={`w-11 h-11 rounded-xl flex items-center justify-center transition ${
-                activeTab === "experience"
+                editorMode === "form" && activeTab === "experience"
                   ? "bg-blue-600 text-white shadow"
                   : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
               }`}
@@ -167,10 +230,13 @@ export default function ResumixStudio() {
             </button>
 
             <button
-              onClick={() => setActiveTab("skills")}
+              onClick={() => {
+                setActiveTab("skills");
+                setEditorMode("form");
+              }}
               title="Skills & Expertise"
               className={`w-11 h-11 rounded-xl flex items-center justify-center transition ${
-                activeTab === "skills"
+                editorMode === "form" && activeTab === "skills"
                   ? "bg-blue-600 text-white shadow"
                   : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
               }`}
@@ -179,10 +245,13 @@ export default function ResumixStudio() {
             </button>
 
             <button
-              onClick={() => setActiveTab("projects")}
+              onClick={() => {
+                setActiveTab("projects");
+                setEditorMode("form");
+              }}
               title="Key Projects"
               className={`w-11 h-11 rounded-xl flex items-center justify-center transition ${
-                activeTab === "projects"
+                editorMode === "form" && activeTab === "projects"
                   ? "bg-blue-600 text-white shadow"
                   : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
               }`}
@@ -191,10 +260,13 @@ export default function ResumixStudio() {
             </button>
 
             <button
-              onClick={() => setActiveTab("education")}
+              onClick={() => {
+                setActiveTab("education");
+                setEditorMode("form");
+              }}
               title="Education"
               className={`w-11 h-11 rounded-xl flex items-center justify-center transition ${
-                activeTab === "education"
+                editorMode === "form" && activeTab === "education"
                   ? "bg-blue-600 text-white shadow"
                   : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
               }`}
@@ -205,10 +277,13 @@ export default function ResumixStudio() {
             <div className="w-8 h-[1px] bg-zinc-800 my-1" />
 
             <button
-              onClick={() => setActiveTab("layout")}
+              onClick={() => {
+                setActiveTab("layout");
+                setEditorMode("form");
+              }}
               title="Drag & Drop Section Order"
               className={`w-11 h-11 rounded-xl flex items-center justify-center transition ${
-                activeTab === "layout"
+                editorMode === "form" && activeTab === "layout"
                   ? "bg-blue-600 text-white shadow"
                   : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
               }`}
@@ -217,15 +292,32 @@ export default function ResumixStudio() {
             </button>
 
             <button
-              onClick={() => setActiveTab("typography")}
+              onClick={() => {
+                setActiveTab("typography");
+                setEditorMode("form");
+              }}
               title="Typography & Font Customizer"
               className={`w-11 h-11 rounded-xl flex items-center justify-center transition ${
-                activeTab === "typography"
+                editorMode === "form" && activeTab === "typography"
                   ? "bg-blue-600 text-white shadow"
                   : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
               }`}
             >
               <Type className="w-5 h-5" />
+            </button>
+
+            <div className="w-8 h-[1px] bg-zinc-800 my-1" />
+
+            <button
+              onClick={() => setEditorMode(editorMode === "code" ? "form" : "code")}
+              title="LaTeX Code Editor Mode (Advanced TeX)"
+              className={`w-11 h-11 rounded-xl flex items-center justify-center transition ${
+                editorMode === "code"
+                  ? "bg-sky-600 text-white shadow shadow-sky-500/20"
+                  : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
+              }`}
+            >
+              <Terminal className="w-5 h-5" />
             </button>
           </nav>
         </div>
@@ -242,30 +334,87 @@ export default function ResumixStudio() {
         </div>
       </aside>
 
-      {/* 2. Middle Editor Panel (Takes fixed width, fits screen height with internal scroll) */}
-      <section className="w-[480px] xl:w-[520px] shrink-0 h-full flex flex-col bg-zinc-900/90 border-r border-zinc-800">
-        {/* Editor Top Bar with Title and Actions */}
-        <div className="px-5 py-3.5 border-b border-zinc-800 flex items-center justify-between bg-zinc-900">
-          <div>
-            <h2 className="text-sm font-bold uppercase tracking-wider text-zinc-200 flex items-center gap-2">
-              {activeTab === "personal" && <User className="w-4 h-4 text-blue-400" />}
-              {activeTab === "summary" && <FileText className="w-4 h-4 text-emerald-400" />}
-              {activeTab === "experience" && <Briefcase className="w-4 h-4 text-amber-400" />}
-              {activeTab === "skills" && <Code2 className="w-4 h-4 text-purple-400" />}
-              {activeTab === "projects" && <FolderGit2 className="w-4 h-4 text-cyan-400" />}
-              {activeTab === "education" && <GraduationCap className="w-4 h-4 text-indigo-400" />}
-              {activeTab === "layout" && <Layers className="w-4 h-4 text-sky-400" />}
-              {activeTab === "typography" && <Type className="w-4 h-4 text-pink-400" />}
-              {activeTab.replace(/([A-Z])/g, " $1")}
-            </h2>
-            <p className="text-[11px] text-zinc-500">Live synchronized with PDF</p>
+      {/* 2. Middle Editor Panel (Adjustable Width via Splitter) */}
+      <section
+        style={{ width: `${editorWidth}px` }}
+        className="shrink-0 h-full flex flex-col bg-zinc-900/90 border-r border-zinc-800 overflow-hidden relative select-text"
+      >
+        {/* Editor Top Bar with Mode Switcher & Export */}
+        <div className="px-5 py-3 border-b border-zinc-800 flex items-center justify-between bg-zinc-900">
+          <div className="flex items-center gap-3">
+            {/* Mode Switcher */}
+            <div className="flex items-center p-0.5 bg-zinc-800/90 rounded-lg border border-zinc-700">
+              <button
+                onClick={() => setEditorMode("form")}
+                className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-md transition ${
+                  editorMode === "form"
+                    ? "bg-blue-600 text-white shadow-sm"
+                    : "text-zinc-400 hover:text-zinc-200"
+                }`}
+              >
+                <PenTool className="w-3.5 h-3.5" />
+                <span>Form</span>
+              </button>
+              <button
+                onClick={() => setEditorMode("code")}
+                className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-md transition ${
+                  editorMode === "code"
+                    ? "bg-sky-600 text-white shadow-sm"
+                    : "text-zinc-400 hover:text-zinc-200"
+                }`}
+              >
+                <Terminal className="w-3.5 h-3.5" />
+                <span>LaTeX Code</span>
+              </button>
+            </div>
+
+            {editorMode === "form" && (
+              <span className="text-xs font-medium text-zinc-400 hidden sm:inline">
+                • {activeTab.replace(/([A-Z])/g, " $1")}
+              </span>
+            )}
           </div>
 
-          <ResumePdfExport resume={resume} />
+          <ResumePdfExport resume={resume} customLatex={resume.customLatex} />
         </div>
 
-        {/* Scrollable Content Area within panel */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-5 select-text">
+        {/* Content: Either Code Editor or Visual Form */}
+        {editorMode === "code" ? (
+          <div className="flex-1 p-3 overflow-hidden">
+            <LatexCodeEditor
+              resume={resume}
+              code={
+                resume.customLatex !== undefined
+                  ? resume.customLatex
+                  : generateLatexDocument(resume)
+              }
+              onChange={(newCode) =>
+                setResume({ ...resume, customLatex: newCode })
+              }
+              onResetToForm={() =>
+                setResume({ ...resume, customLatex: undefined })
+              }
+              onCompile={() => {
+                setResume((prev) => ({
+                  ...prev,
+                  customLatex:
+                    prev.customLatex !== undefined
+                      ? prev.customLatex
+                      : generateLatexDocument(prev),
+                }));
+              }}
+              isExpanded={editorWidth > 680}
+              onToggleExpand={() => {
+                if (editorWidth > 680) {
+                  setEditorWidth(520);
+                } else {
+                  setEditorWidth(Math.round(window.innerWidth * 0.55));
+                }
+              }}
+            />
+          </div>
+        ) : (
+          <div className="flex-1 overflow-y-auto p-5 space-y-5 select-text">
           {/* PERSONAL INFO TAB */}
           {activeTab === "personal" && (
             <div className="space-y-4">
@@ -755,12 +904,31 @@ export default function ResumixStudio() {
             />
           )}
         </div>
+      )}
       </section>
 
+      {/* Resize Splitter Divider Handle */}
+      <div
+        onMouseDown={startResizing}
+        onDoubleClick={() => setEditorWidth(520)}
+        title="Drag horizontally to resize editor (Double-click to reset to 520px)"
+        className={`group relative w-2 shrink-0 cursor-col-resize select-none flex items-center justify-center transition-colors z-30 ${
+          isResizing
+            ? "bg-sky-500 shadow-md shadow-sky-500/30"
+            : "bg-zinc-900 hover:bg-sky-500/80 border-r border-zinc-800"
+        }`}
+      >
+        <div className="w-0.5 h-8 rounded-full bg-zinc-700 group-hover:bg-white transition-colors" />
+      </div>
+
       {/* 3. Right Real PDF Viewport (Takes remaining width and 100% viewport height, no outside scrolling) */}
-      <section className="flex-1 h-full bg-zinc-950 p-4 flex flex-col items-center justify-center overflow-hidden">
+      <section className="flex-1 h-full bg-zinc-950 p-4 flex flex-col items-center justify-center overflow-hidden relative">
+        {/* Invisible dragging overlay prevents iframe from capturing mouse pointer */}
+        {isResizing && (
+          <div className="absolute inset-0 z-50 cursor-col-resize select-none bg-transparent pointer-events-auto" />
+        )}
         <div className="w-full h-full max-w-[950px] flex flex-col items-center justify-center">
-          <RealPdfViewer resume={resume} />
+          <RealPdfViewer resume={resume} customLatex={resume.customLatex} />
         </div>
       </section>
     </div>

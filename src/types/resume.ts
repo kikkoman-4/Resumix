@@ -78,6 +78,7 @@ export interface ResumeData {
   skills: SkillCategory[];
   sectionOrder: string[]; // e.g. ['summary', 'work', 'skills', 'projects', 'education']
   typography: TypographySettings;
+  customLatex?: string; // Raw LaTeX code override for advanced/complicated changes
 }
 
 export const defaultTypography: TypographySettings = {

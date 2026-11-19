@@ -7,13 +7,18 @@ import { generateLatexDocument } from "@/lib/latexGenerator";
 
 interface Props {
   resume: ResumeData;
+  customLatex?: string;
 }
 
-export default function ResumePdfExport({ resume }: Props) {
+export default function ResumePdfExport({ resume, customLatex }: Props) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
   const safeFileName = `${(resume.personalInfo.fullName || "Resume").replace(/\s+/g, "_")}_Resume`;
+
+  const getPayload = () => {
+    return customLatex !== undefined ? { latexCode: customLatex } : { resume };
+  };
 
   const handleDownloadPdf = async () => {
     setIsGenerating(true);
@@ -22,7 +27,7 @@ export default function ResumePdfExport({ resume }: Props) {
       const response = await fetch("/api/compile-latex", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ resume }),
+        body: JSON.stringify(getPayload()),
       });
 
       if (!response.ok) {
@@ -55,7 +60,7 @@ export default function ResumePdfExport({ resume }: Props) {
       const response = await fetch("/api/compile-latex", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ resume }),
+        body: JSON.stringify(getPayload()),
       });
 
       if (!response.ok) {
@@ -76,7 +81,7 @@ export default function ResumePdfExport({ resume }: Props) {
 
   const handleDownloadTex = () => {
     setShowDropdown(false);
-    const latexSource = generateLatexDocument(resume);
+    const latexSource = customLatex !== undefined ? customLatex : generateLatexDocument(resume);
     const blob = new Blob([latexSource], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
