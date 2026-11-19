@@ -7,6 +7,7 @@ import {
   ResumeData, 
   WorkExperience, 
   Project, 
+  Education,
   defaultTypography 
 } from "@/types/resume";
 import DraggableSectionOrder from "@/components/DraggableSectionOrder";
@@ -28,7 +29,11 @@ import {
   Wand2, 
   Sparkles,
   Terminal,
-  PenTool
+  PenTool,
+  Eye,
+  EyeOff,
+  ChevronUp,
+  ChevronDown
 } from "lucide-react";
 
 const LOCAL_STORAGE_KEY = "resumix_current_resume_v1";
@@ -55,6 +60,57 @@ type SidebarTab =
   | "education" 
   | "layout" 
   | "typography";
+
+function SectionHeaderBanner({
+  title,
+  sectionId,
+  disabledSections,
+  onToggle,
+}: {
+  title: string;
+  sectionId: string;
+  disabledSections?: string[];
+  onToggle: (id: string) => void;
+}) {
+  const isHidden = (disabledSections || []).includes(sectionId);
+
+  return (
+    <div
+      className={`flex items-center justify-between p-3 rounded-xl border transition ${
+        isHidden
+          ? "bg-amber-950/25 border-amber-800/40 text-amber-200"
+          : "bg-zinc-800/40 border-zinc-700/50 text-zinc-300"
+      }`}
+    >
+      <div className="flex items-center gap-2">
+        <span className="text-xs font-semibold">{title}</span>
+        {isHidden ? (
+          <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-950/80 text-amber-400 border border-amber-800/80 font-medium">
+            Hidden from PDF
+          </span>
+        ) : (
+          <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-950/80 text-emerald-400 border border-emerald-800/80 font-medium">
+            Active in PDF
+          </span>
+        )}
+      </div>
+
+      <button
+        type="button"
+        onClick={() => onToggle(sectionId)}
+        className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg border transition ${
+          isHidden
+            ? "bg-amber-900/40 text-amber-300 border-amber-700/60 hover:bg-amber-900/60"
+            : "bg-zinc-800 text-zinc-300 border-zinc-700 hover:text-zinc-100 hover:bg-zinc-700"
+        }`}
+        title={isHidden ? "Include this category in PDF" : "Exclude this category from PDF"}
+      >
+        {isHidden ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5 text-zinc-400" />}
+        <span>{isHidden ? "Show in PDF" : "Hide from PDF"}</span>
+      </button>
+    </div>
+  );
+}
 
 export default function ResumixStudio() {
   const [resume, setResume] = useState<ResumeData>(() => {
@@ -170,6 +226,26 @@ export default function ResumixStudio() {
     }
   };
 
+  const handleToggleSection = (sectionId: string) => {
+    const current = new Set(resume.disabledSections || []);
+    if (current.has(sectionId)) {
+      current.delete(sectionId);
+    } else {
+      current.add(sectionId);
+    }
+    setResume({ ...resume, disabledSections: Array.from(current) });
+  };
+
+  const moveItem = <T,>(list: T[], index: number, direction: "up" | "down"): T[] => {
+    const targetIdx = direction === "up" ? index - 1 : index + 1;
+    if (targetIdx < 0 || targetIdx >= list.length) return list;
+    const copy = [...list];
+    const item = copy[index];
+    copy[index] = copy[targetIdx];
+    copy[targetIdx] = item;
+    return copy;
+  };
+
   return (
     <div className="h-screen w-screen overflow-hidden bg-zinc-950 text-zinc-100 flex font-sans select-none">
       {/* 1. Left Vertical Icon Sidebar */}
@@ -204,14 +280,19 @@ export default function ResumixStudio() {
                 setActiveTab("summary");
                 setEditorMode("form");
               }}
-              title="Professional Summary"
-              className={`w-11 h-11 rounded-xl flex items-center justify-center transition ${
+              title={`Professional Summary${(resume.disabledSections || []).includes("summary") ? " (Hidden from PDF)" : ""}`}
+              className={`relative w-11 h-11 rounded-xl flex items-center justify-center transition ${
                 editorMode === "form" && activeTab === "summary"
                   ? "bg-blue-600 text-white shadow"
+                  : (resume.disabledSections || []).includes("summary")
+                  ? "text-zinc-600 hover:text-zinc-400 hover:bg-zinc-800/40"
                   : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
               }`}
             >
               <FileText className="w-5 h-5" />
+              {(resume.disabledSections || []).includes("summary") && (
+                <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-amber-400" />
+              )}
             </button>
 
             <button
@@ -219,14 +300,19 @@ export default function ResumixStudio() {
                 setActiveTab("experience");
                 setEditorMode("form");
               }}
-              title="Work Experience"
-              className={`w-11 h-11 rounded-xl flex items-center justify-center transition ${
+              title={`Work Experience${(resume.disabledSections || []).includes("workExperiences") ? " (Hidden from PDF)" : ""}`}
+              className={`relative w-11 h-11 rounded-xl flex items-center justify-center transition ${
                 editorMode === "form" && activeTab === "experience"
                   ? "bg-blue-600 text-white shadow"
+                  : (resume.disabledSections || []).includes("workExperiences")
+                  ? "text-zinc-600 hover:text-zinc-400 hover:bg-zinc-800/40"
                   : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
               }`}
             >
               <Briefcase className="w-5 h-5" />
+              {(resume.disabledSections || []).includes("workExperiences") && (
+                <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-amber-400" />
+              )}
             </button>
 
             <button
@@ -234,14 +320,19 @@ export default function ResumixStudio() {
                 setActiveTab("skills");
                 setEditorMode("form");
               }}
-              title="Skills & Expertise"
-              className={`w-11 h-11 rounded-xl flex items-center justify-center transition ${
+              title={`Skills & Expertise${(resume.disabledSections || []).includes("skills") ? " (Hidden from PDF)" : ""}`}
+              className={`relative w-11 h-11 rounded-xl flex items-center justify-center transition ${
                 editorMode === "form" && activeTab === "skills"
                   ? "bg-blue-600 text-white shadow"
+                  : (resume.disabledSections || []).includes("skills")
+                  ? "text-zinc-600 hover:text-zinc-400 hover:bg-zinc-800/40"
                   : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
               }`}
             >
               <Code2 className="w-5 h-5" />
+              {(resume.disabledSections || []).includes("skills") && (
+                <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-amber-400" />
+              )}
             </button>
 
             <button
@@ -249,14 +340,19 @@ export default function ResumixStudio() {
                 setActiveTab("projects");
                 setEditorMode("form");
               }}
-              title="Key Projects"
-              className={`w-11 h-11 rounded-xl flex items-center justify-center transition ${
+              title={`Key Projects${(resume.disabledSections || []).includes("projects") ? " (Hidden from PDF)" : ""}`}
+              className={`relative w-11 h-11 rounded-xl flex items-center justify-center transition ${
                 editorMode === "form" && activeTab === "projects"
                   ? "bg-blue-600 text-white shadow"
+                  : (resume.disabledSections || []).includes("projects")
+                  ? "text-zinc-600 hover:text-zinc-400 hover:bg-zinc-800/40"
                   : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
               }`}
             >
               <FolderGit2 className="w-5 h-5" />
+              {(resume.disabledSections || []).includes("projects") && (
+                <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-amber-400" />
+              )}
             </button>
 
             <button
@@ -264,14 +360,19 @@ export default function ResumixStudio() {
                 setActiveTab("education");
                 setEditorMode("form");
               }}
-              title="Education"
-              className={`w-11 h-11 rounded-xl flex items-center justify-center transition ${
+              title={`Education${(resume.disabledSections || []).includes("educations") ? " (Hidden from PDF)" : ""}`}
+              className={`relative w-11 h-11 rounded-xl flex items-center justify-center transition ${
                 editorMode === "form" && activeTab === "education"
                   ? "bg-blue-600 text-white shadow"
+                  : (resume.disabledSections || []).includes("educations")
+                  ? "text-zinc-600 hover:text-zinc-400 hover:bg-zinc-800/40"
                   : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
               }`}
             >
               <GraduationCap className="w-5 h-5" />
+              {(resume.disabledSections || []).includes("educations") && (
+                <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-amber-400" />
+              )}
             </button>
 
             <div className="w-8 h-[1px] bg-zinc-800 my-1" />
@@ -545,9 +646,15 @@ export default function ResumixStudio() {
 
           {/* PROFESSIONAL SUMMARY TAB */}
           {activeTab === "summary" && (
-            <div className="space-y-3">
+            <div className="space-y-4">
+              <SectionHeaderBanner
+                title="Professional Summary"
+                sectionId="summary"
+                disabledSections={resume.disabledSections}
+                onToggle={handleToggleSection}
+              />
               <div className="flex items-center justify-between">
-                <span className="text-xs text-zinc-400">Executive Summary</span>
+                <span className="text-xs text-zinc-400 font-medium">Executive Summary</span>
                 <button
                   onClick={() =>
                     handleEnhanceBullet("summary", resume.summary, (res) =>
@@ -574,6 +681,13 @@ export default function ResumixStudio() {
           {/* WORK EXPERIENCE TAB */}
           {activeTab === "experience" && (
             <div className="space-y-4">
+              <SectionHeaderBanner
+                title="Work Experience"
+                sectionId="workExperiences"
+                disabledSections={resume.disabledSections}
+                onToggle={handleToggleSection}
+              />
+
               <button
                 onClick={() => {
                   const newExp: WorkExperience = {
@@ -623,16 +737,44 @@ export default function ResumixStudio() {
                         className="px-2.5 py-1.5 text-xs bg-zinc-800 border border-zinc-700 rounded-md"
                       />
                     </div>
-                    <button
-                      onClick={() => {
-                        const filtered = resume.workExperiences.filter((item) => item.id !== exp.id);
-                        setResume({ ...resume, workExperiences: filtered });
-                      }}
-                      className="p-1.5 text-zinc-500 hover:text-red-400 rounded-md"
-                      title="Remove"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() =>
+                          setResume({
+                            ...resume,
+                            workExperiences: moveItem(resume.workExperiences, expIdx, "up"),
+                          })
+                        }
+                        disabled={expIdx === 0}
+                        className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700/60 rounded disabled:opacity-20 transition"
+                        title="Move Up"
+                      >
+                        <ChevronUp className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() =>
+                          setResume({
+                            ...resume,
+                            workExperiences: moveItem(resume.workExperiences, expIdx, "down"),
+                          })
+                        }
+                        disabled={expIdx === resume.workExperiences.length - 1}
+                        className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700/60 rounded disabled:opacity-20 transition"
+                        title="Move Down"
+                      >
+                        <ChevronDown className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => {
+                          const filtered = resume.workExperiences.filter((item) => item.id !== exp.id);
+                          setResume({ ...resume, workExperiences: filtered });
+                        }}
+                        className="p-1.5 text-zinc-500 hover:text-red-400 rounded-md ml-1 transition"
+                        title="Remove"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-3 gap-2">
@@ -718,38 +860,160 @@ export default function ResumixStudio() {
 
           {/* SKILLS TAB */}
           {activeTab === "skills" && (
-            <div className="space-y-3">
-              {resume.skills.map((skillGroup, idx) => (
-                <div key={skillGroup.id} className="p-3 bg-zinc-800/50 rounded-xl border border-zinc-700/60 space-y-2">
-                  <input
-                    type="text"
-                    value={skillGroup.categoryName}
-                    onChange={(e) => {
-                      const copy = [...resume.skills];
-                      copy[idx].categoryName = e.target.value;
-                      setResume({ ...resume, skills: copy });
-                    }}
-                    className="w-full px-2.5 py-1.5 text-xs font-semibold bg-zinc-800 border border-zinc-700 rounded-md"
-                  />
-                  <textarea
-                    rows={2}
-                    value={skillGroup.items.join(", ")}
-                    onChange={(e) => {
-                      const copy = [...resume.skills];
-                      copy[idx].items = e.target.value.split(",").map((s) => s.trim());
-                      setResume({ ...resume, skills: copy });
-                    }}
-                    placeholder="Comma-separated items"
-                    className="w-full px-2.5 py-1.5 text-xs bg-zinc-800 border border-zinc-700 rounded-md"
-                  />
-                </div>
-              ))}
+            <div className="space-y-4">
+              <SectionHeaderBanner
+                title="Skills & Expertise"
+                sectionId="skills"
+                disabledSections={resume.disabledSections}
+                onToggle={handleToggleSection}
+              />
+
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-xs text-zinc-400 font-medium">Skill Categories</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newSkillCat = {
+                      id: `skill-${Date.now()}`,
+                      categoryName: "New Category",
+                      items: ["Skill 1", "Skill 2"],
+                    };
+                    setResume({ ...resume, skills: [...resume.skills, newSkillCat] });
+                  }}
+                  className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-blue-400 bg-blue-950/40 hover:bg-blue-950/60 border border-blue-900/50 rounded-lg transition"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add Skill Category</span>
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                {resume.skills.map((skillGroup, idx) => {
+                  const isCatDisabled = skillGroup.disabled === true;
+                  return (
+                    <div
+                      key={skillGroup.id}
+                      className={`p-3.5 rounded-xl border space-y-2.5 transition ${
+                        isCatDisabled
+                          ? "bg-zinc-900/50 border-zinc-800/80 opacity-60"
+                          : "bg-zinc-800/50 border-zinc-700/60"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 flex-1">
+                          <input
+                            type="text"
+                            value={skillGroup.categoryName}
+                            onChange={(e) => {
+                              const copy = [...resume.skills];
+                              copy[idx].categoryName = e.target.value;
+                              setResume({ ...resume, skills: copy });
+                            }}
+                            placeholder="Category Name (e.g. Languages & Frameworks)"
+                            className={`flex-1 px-2.5 py-1.5 text-xs font-semibold bg-zinc-800 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 ${
+                              isCatDisabled
+                                ? "line-through text-zinc-500 border-zinc-700/50"
+                                : "text-zinc-200 border-zinc-700"
+                            }`}
+                          />
+                          {isCatDisabled && (
+                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 font-medium shrink-0">
+                              Hidden
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Reorder and Toggle Controls */}
+                        <div className="flex items-center gap-1 shrink-0">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setResume({
+                                ...resume,
+                                skills: moveItem(resume.skills, idx, "up"),
+                              })
+                            }
+                            disabled={idx === 0}
+                            className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700/60 rounded disabled:opacity-20 transition"
+                            title="Move Category Up"
+                          >
+                            <ChevronUp className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setResume({
+                                ...resume,
+                                skills: moveItem(resume.skills, idx, "down"),
+                              })
+                            }
+                            disabled={idx === resume.skills.length - 1}
+                            className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700/60 rounded disabled:opacity-20 transition"
+                            title="Move Category Down"
+                          >
+                            <ChevronDown className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const copy = [...resume.skills];
+                              copy[idx] = {
+                                ...copy[idx],
+                                disabled: !copy[idx].disabled,
+                              };
+                              setResume({ ...resume, skills: copy });
+                            }}
+                            className={`p-1.5 rounded transition ${
+                              isCatDisabled
+                                ? "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800"
+                                : "text-emerald-400 hover:bg-emerald-950/60"
+                            }`}
+                            title={isCatDisabled ? "Enable this skill category in PDF" : "Disable/hide this skill category from PDF"}
+                          >
+                            {isCatDisabled ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const filtered = resume.skills.filter((item) => item.id !== skillGroup.id);
+                              setResume({ ...resume, skills: filtered });
+                            }}
+                            className="p-1.5 text-zinc-500 hover:text-red-400 hover:bg-red-950/30 rounded transition"
+                            title="Delete Category"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+
+                      <textarea
+                        rows={2}
+                        value={skillGroup.items.join(", ")}
+                        onChange={(e) => {
+                          const copy = [...resume.skills];
+                          copy[idx].items = e.target.value.split(",").map((s) => s.trim());
+                          setResume({ ...resume, skills: copy });
+                        }}
+                        placeholder="Comma-separated items (e.g. React, TypeScript, Next.js)"
+                        className="w-full px-2.5 py-1.5 text-xs bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 leading-relaxed"
+                      />
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
 
           {/* PROJECTS TAB */}
           {activeTab === "projects" && (
             <div className="space-y-4">
+              <SectionHeaderBanner
+                title="Key Projects"
+                sectionId="projects"
+                disabledSections={resume.disabledSections}
+                onToggle={handleToggleSection}
+              />
+
               <button
                 onClick={() => {
                   const newProj: Project = {
@@ -780,15 +1044,44 @@ export default function ResumixStudio() {
                       }}
                       className="flex-1 px-2.5 py-1.5 text-xs font-semibold bg-zinc-800 border border-zinc-700 rounded-md"
                     />
-                    <button
-                      onClick={() => {
-                        const filtered = resume.projects.filter((item) => item.id !== proj.id);
-                        setResume({ ...resume, projects: filtered });
-                      }}
-                      className="p-1.5 text-zinc-500 hover:text-red-400 rounded-md"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() =>
+                          setResume({
+                            ...resume,
+                            projects: moveItem(resume.projects, projIdx, "up"),
+                          })
+                        }
+                        disabled={projIdx === 0}
+                        className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700/60 rounded disabled:opacity-20 transition"
+                        title="Move Up"
+                      >
+                        <ChevronUp className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() =>
+                          setResume({
+                            ...resume,
+                            projects: moveItem(resume.projects, projIdx, "down"),
+                          })
+                        }
+                        disabled={projIdx === resume.projects.length - 1}
+                        className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700/60 rounded disabled:opacity-20 transition"
+                        title="Move Down"
+                      >
+                        <ChevronDown className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => {
+                          const filtered = resume.projects.filter((item) => item.id !== proj.id);
+                          setResume({ ...resume, projects: filtered });
+                        }}
+                        className="p-1.5 text-zinc-500 hover:text-red-400 rounded-md ml-1 transition"
+                        title="Remove"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                   <input
                     type="text"
@@ -820,31 +1113,96 @@ export default function ResumixStudio() {
           {/* EDUCATION TAB */}
           {activeTab === "education" && (
             <div className="space-y-4">
+              <SectionHeaderBanner
+                title="Education"
+                sectionId="educations"
+                disabledSections={resume.disabledSections}
+                onToggle={handleToggleSection}
+              />
+
+              <button
+                onClick={() => {
+                  const newEdu: Education = {
+                    id: `edu-${Date.now()}`,
+                    institution: "University / College Name",
+                    degree: "Bachelor of Science",
+                    fieldOfStudy: "Computer Science",
+                    location: "City, Country",
+                    startDate: "2020",
+                    endDate: "2024",
+                  };
+                  setResume({ ...resume, educations: [...resume.educations, newEdu] });
+                }}
+                className="w-full flex items-center justify-center gap-1.5 py-2 text-xs font-semibold text-blue-400 bg-blue-950/40 hover:bg-blue-950/60 border border-blue-900/50 rounded-lg transition"
+              >
+                <Plus className="w-3.5 h-3.5" /> Add Education
+              </button>
+
               {resume.educations.map((edu, eduIdx) => (
                 <div key={edu.id} className="p-3.5 bg-zinc-800/50 rounded-xl border border-zinc-700/60 space-y-2">
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      type="text"
-                      placeholder="Degree"
-                      value={edu.degree}
-                      onChange={(e) => {
-                        const copy = [...resume.educations];
-                        copy[eduIdx].degree = e.target.value;
-                        setResume({ ...resume, educations: copy });
-                      }}
-                      className="px-2.5 py-1.5 text-xs bg-zinc-800 border border-zinc-700 rounded-md"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Institution"
-                      value={edu.institution}
-                      onChange={(e) => {
-                        const copy = [...resume.educations];
-                        copy[eduIdx].institution = e.target.value;
-                        setResume({ ...resume, educations: copy });
-                      }}
-                      className="px-2.5 py-1.5 text-xs bg-zinc-800 border border-zinc-700 rounded-md"
-                    />
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="grid grid-cols-2 gap-2 flex-1">
+                      <input
+                        type="text"
+                        placeholder="Degree"
+                        value={edu.degree}
+                        onChange={(e) => {
+                          const copy = [...resume.educations];
+                          copy[eduIdx].degree = e.target.value;
+                          setResume({ ...resume, educations: copy });
+                        }}
+                        className="px-2.5 py-1.5 text-xs bg-zinc-800 border border-zinc-700 rounded-md"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Institution"
+                        value={edu.institution}
+                        onChange={(e) => {
+                          const copy = [...resume.educations];
+                          copy[eduIdx].institution = e.target.value;
+                          setResume({ ...resume, educations: copy });
+                        }}
+                        className="px-2.5 py-1.5 text-xs bg-zinc-800 border border-zinc-700 rounded-md"
+                      />
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() =>
+                          setResume({
+                            ...resume,
+                            educations: moveItem(resume.educations, eduIdx, "up"),
+                          })
+                        }
+                        disabled={eduIdx === 0}
+                        className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700/60 rounded disabled:opacity-20 transition"
+                        title="Move Up"
+                      >
+                        <ChevronUp className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() =>
+                          setResume({
+                            ...resume,
+                            educations: moveItem(resume.educations, eduIdx, "down"),
+                          })
+                        }
+                        disabled={eduIdx === resume.educations.length - 1}
+                        className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700/60 rounded disabled:opacity-20 transition"
+                        title="Move Down"
+                      >
+                        <ChevronDown className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => {
+                          const filtered = resume.educations.filter((item) => item.id !== edu.id);
+                          setResume({ ...resume, educations: filtered });
+                        }}
+                        className="p-1.5 text-zinc-500 hover:text-red-400 rounded-md ml-1 transition"
+                        title="Remove"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                   <input
                     type="text"
@@ -892,7 +1250,16 @@ export default function ResumixStudio() {
           {activeTab === "layout" && (
             <DraggableSectionOrder
               sectionOrder={resume.sectionOrder}
-              onChange={(newOrder) => setResume({ ...resume, sectionOrder: newOrder })}
+              disabledSections={resume.disabledSections || []}
+              onChangeOrder={(newOrder) => setResume({ ...resume, sectionOrder: newOrder })}
+              onToggleSection={handleToggleSection}
+              onEnableAll={() => setResume({ ...resume, disabledSections: [] })}
+              onResetOrder={() =>
+                setResume({
+                  ...resume,
+                  sectionOrder: ["summary", "workExperiences", "skills", "projects", "educations"],
+                })
+              }
             />
           )}
 

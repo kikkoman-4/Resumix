@@ -235,7 +235,10 @@ ${items}
 
   const renderSkills = (): string => {
     if (!resume.skills || resume.skills.length === 0) return "";
-    const rows = resume.skills.map((skillGroup) => {
+    const activeSkills = resume.skills.filter((skillGroup) => !skillGroup.disabled);
+    if (activeSkills.length === 0) return "";
+
+    const rows = activeSkills.map((skillGroup) => {
       const category = escapeLatex(skillGroup.categoryName);
       const items = escapeLatex(skillGroup.items.join(", "));
       return `\\textbf{${category}:} ${items} \\\\`;
@@ -249,7 +252,7 @@ ${rows}
 `;
   };
 
-  // Build sections according to user's defined sectionOrder
+  // Build sections according to user's defined sectionOrder (skipping disabled categories)
   const sectionRenderers: Record<string, () => string> = {
     summary: renderSummary,
     workExperiences: renderWorkExperience,
@@ -261,7 +264,10 @@ ${rows}
     skills: renderSkills,
   };
 
+  const disabledSet = new Set(resume.disabledSections || []);
+
   const renderedSections = (resume.sectionOrder || ["summary", "workExperiences", "skills", "projects", "educations"])
+    .filter((key) => !disabledSet.has(key))
     .map((key) => sectionRenderers[key]?.() || "")
     .filter(Boolean)
     .join("\n");

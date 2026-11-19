@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
 
     if (!apiKey) {
       // Graceful high-quality heuristic fallback if API key is not yet set
-      const enhanced = enhanceBulletLocal(text, type);
+      const enhanced = enhanceBulletLocal(text);
       return NextResponse.json({
         enhancedText: enhanced,
         source: "local-fallback",
@@ -65,7 +65,7 @@ Rules:
   }
 }
 
-function enhanceBulletLocal(text: string, type?: string): string {
+function enhanceBulletLocal(text: string): string {
   let cleaned = text.trim().replace(/^[-•*]\s*/, "");
   
   // Power verbs replacement map for starter words

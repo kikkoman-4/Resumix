@@ -45,6 +45,7 @@ export interface SkillCategory {
   id: string;
   categoryName: string;
   items: string[];
+  disabled?: boolean;
 }
 
 export interface TypographySettings {
@@ -79,6 +80,7 @@ export interface ResumeData {
   sectionOrder: string[]; // e.g. ['summary', 'work', 'skills', 'projects', 'education']
   typography: TypographySettings;
   customLatex?: string; // Raw LaTeX code override for advanced/complicated changes
+  disabledSections?: string[]; // IDs of sections disabled/hidden from compilation
 }
 
 export const defaultTypography: TypographySettings = {
