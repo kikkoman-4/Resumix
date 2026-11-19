@@ -13,6 +13,8 @@ import {
 import DraggableSectionOrder from "@/components/DraggableSectionOrder";
 import TypographyModal from "@/components/TypographyModal";
 import LatexCodeEditor from "@/components/LatexCodeEditor";
+import GeminiSkillsTailorModal from "@/components/GeminiSkillsTailorModal";
+import SkillCatalogModal from "@/components/SkillCatalogModal";
 import { generateLatexDocument } from "@/lib/latexGenerator";
 import { 
   User, 
@@ -33,7 +35,8 @@ import {
   Eye,
   EyeOff,
   ChevronUp,
-  ChevronDown
+  ChevronDown,
+  BookOpen
 } from "lucide-react";
 
 const LOCAL_STORAGE_KEY = "resumix_current_resume_v1";
@@ -151,6 +154,8 @@ export default function ResumixStudio() {
     return 520;
   });
   const [isResizing, setIsResizing] = useState<boolean>(false);
+  const [isGeminiTailorOpen, setIsGeminiTailorOpen] = useState<boolean>(false);
+  const [isSkillCatalogOpen, setIsSkillCatalogOpen] = useState<boolean>(false);
 
   const startResizing = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -868,7 +873,58 @@ export default function ResumixStudio() {
                 onToggle={handleToggleSection}
               />
 
-              <div className="flex items-center justify-between gap-2">
+              {/* Automatic & Manual Override Action Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {/* 1. Automatic AI Job Tailor */}
+                <button
+                  type="button"
+                  onClick={() => setIsGeminiTailorOpen(true)}
+                  className="flex items-center gap-3 p-3 text-left rounded-xl bg-gradient-to-br from-sky-950/60 to-blue-950/40 hover:from-sky-900/60 hover:to-blue-900/50 border border-sky-800/60 hover:border-sky-600 transition shadow-sm group"
+                >
+                  <div className="p-2 rounded-lg bg-sky-600/20 text-sky-400 border border-sky-500/30 group-hover:bg-sky-600 group-hover:text-white transition shrink-0">
+                    <Sparkles className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs font-semibold text-zinc-100 group-hover:text-sky-300 transition">
+                        AI Job Tailor
+                      </span>
+                      <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-sky-900 text-sky-300 font-bold border border-sky-700/60">
+                        Gemini
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-zinc-400 truncate mt-0.5">
+                      Paste job requirements to auto-tailor skills
+                    </p>
+                  </div>
+                </button>
+
+                {/* 2. Manual Override Catalog Picker */}
+                <button
+                  type="button"
+                  onClick={() => setIsSkillCatalogOpen(true)}
+                  className="flex items-center gap-3 p-3 text-left rounded-xl bg-gradient-to-br from-emerald-950/60 to-teal-950/40 hover:from-emerald-900/60 hover:to-teal-900/50 border border-emerald-800/60 hover:border-emerald-600 transition shadow-sm group"
+                >
+                  <div className="p-2 rounded-lg bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 group-hover:bg-emerald-600 group-hover:text-white transition shrink-0">
+                    <BookOpen className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs font-semibold text-zinc-100 group-hover:text-emerald-300 transition">
+                        Manual Override
+                      </span>
+                      <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-emerald-900 text-emerald-300 font-bold border border-emerald-700/60">
+                        Catalog
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-zinc-400 truncate mt-0.5">
+                      Browse & check languages and frameworks
+                    </p>
+                  </div>
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between gap-2 pt-1">
                 <span className="text-xs text-zinc-400 font-medium">Skill Categories</span>
                 <button
                   type="button"
@@ -1298,6 +1354,23 @@ export default function ResumixStudio() {
           <RealPdfViewer resume={resume} customLatex={resume.customLatex} />
         </div>
       </section>
+
+      {/* AI Job Tailoring Modal (Gemini) */}
+      <GeminiSkillsTailorModal
+        isOpen={isGeminiTailorOpen}
+        onClose={() => setIsGeminiTailorOpen(false)}
+        currentSkills={resume.skills}
+        jobTitle={resume.personalInfo.jobTitle}
+        onApplySkills={(newSkills) => setResume({ ...resume, skills: newSkills })}
+      />
+
+      {/* Manual Skill Catalog Checklist Modal */}
+      <SkillCatalogModal
+        isOpen={isSkillCatalogOpen}
+        onClose={() => setIsSkillCatalogOpen(false)}
+        currentSkills={resume.skills}
+        onUpdateSkills={(updatedSkills) => setResume({ ...resume, skills: updatedSkills })}
+      />
     </div>
   );
 }

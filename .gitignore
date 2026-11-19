@@ -13,16 +13,20 @@
 # testing
 /coverage
 
-# next.js
+# next.js & turbopack
 /.next/
 /out/
+/.turbo/
 
 # production
 /build
 
-# misc
+# misc & OS
 .DS_Store
 *.pem
+Thumbs.db
+ehthumbs.db
+Desktop.ini
 
 # debug
 npm-debug.log*
@@ -30,8 +34,10 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# environment variables
+.env*.local
+.env
+!.env.example
 
 # vercel
 .vercel
@@ -39,3 +45,18 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# editor & IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# LaTeX compilation temporary artifacts
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
