@@ -2,13 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { 
-  initialResumeData, 
-  ResumeData, 
-  WorkExperience, 
-  Project, 
+import {
+  initialResumeData,
+  ResumeData,
+  WorkExperience,
+  Project,
   Education,
-  defaultTypography 
+  defaultTypography
 } from "@/types/resume";
 import DraggableSectionOrder from "@/components/DraggableSectionOrder";
 import TypographyModal from "@/components/TypographyModal";
@@ -16,19 +16,19 @@ import LatexCodeEditor from "@/components/LatexCodeEditor";
 import GeminiSkillsTailorModal from "@/components/GeminiSkillsTailorModal";
 import SkillCatalogModal from "@/components/SkillCatalogModal";
 import { generateLatexDocument } from "@/lib/latexGenerator";
-import { 
-  User, 
-  FileText, 
-  Briefcase, 
-  Code2, 
-  FolderGit2, 
-  GraduationCap, 
-  Type, 
-  Layers, 
-  RotateCcw, 
-  Plus, 
-  Trash2, 
-  Wand2, 
+import {
+  User,
+  FileText,
+  Briefcase,
+  Code2,
+  FolderGit2,
+  GraduationCap,
+  Type,
+  Layers,
+  RotateCcw,
+  Plus,
+  Trash2,
+  Wand2,
   Sparkles,
   Terminal,
   PenTool,
@@ -54,14 +54,14 @@ const RealPdfViewer = dynamic(() => import("@/components/RealPdfViewer"), {
   ),
 });
 
-type SidebarTab = 
-  | "personal" 
-  | "summary" 
-  | "experience" 
-  | "skills" 
-  | "projects" 
-  | "education" 
-  | "layout" 
+type SidebarTab =
+  | "personal"
+  | "summary"
+  | "experience"
+  | "skills"
+  | "projects"
+  | "education"
+  | "layout"
   | "typography";
 
 function SectionHeaderBanner({
@@ -79,11 +79,10 @@ function SectionHeaderBanner({
 
   return (
     <div
-      className={`flex items-center justify-between p-3 rounded-xl border transition ${
-        isHidden
+      className={`flex items-center justify-between p-3 rounded-xl border transition ${isHidden
           ? "bg-amber-950/25 border-amber-800/40 text-amber-200"
           : "bg-zinc-800/40 border-zinc-700/50 text-zinc-300"
-      }`}
+        }`}
     >
       <div className="flex items-center gap-2">
         <span className="text-xs font-semibold">{title}</span>
@@ -101,11 +100,10 @@ function SectionHeaderBanner({
       <button
         type="button"
         onClick={() => onToggle(sectionId)}
-        className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg border transition ${
-          isHidden
+        className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-lg border transition ${isHidden
             ? "bg-amber-900/40 text-amber-300 border-amber-700/60 hover:bg-amber-900/60"
             : "bg-zinc-800 text-zinc-300 border-zinc-700 hover:text-zinc-100 hover:bg-zinc-700"
-        }`}
+          }`}
         title={isHidden ? "Include this category in PDF" : "Exclude this category from PDF"}
       >
         {isHidden ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5 text-zinc-400" />}
@@ -209,8 +207,8 @@ export default function ResumixStudio() {
 
   // AI Polisher Trigger
   const handleEnhanceBullet = async (
-    fieldId: string, 
-    currentText: string, 
+    fieldId: string,
+    currentText: string,
     onUpdate: (newText: string) => void
   ) => {
     setEnhancingId(fieldId);
@@ -271,11 +269,10 @@ export default function ResumixStudio() {
                 setEditorMode("form");
               }}
               title="Personal Details"
-              className={`w-11 h-11 rounded-xl flex items-center justify-center transition ${
-                editorMode === "form" && activeTab === "personal"
+              className={`w-11 h-11 rounded-xl flex items-center justify-center transition ${editorMode === "form" && activeTab === "personal"
                   ? "bg-blue-600 text-white shadow"
                   : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
-              }`}
+                }`}
             >
               <User className="w-5 h-5" />
             </button>
@@ -286,13 +283,12 @@ export default function ResumixStudio() {
                 setEditorMode("form");
               }}
               title={`Professional Summary${(resume.disabledSections || []).includes("summary") ? " (Hidden from PDF)" : ""}`}
-              className={`relative w-11 h-11 rounded-xl flex items-center justify-center transition ${
-                editorMode === "form" && activeTab === "summary"
+              className={`relative w-11 h-11 rounded-xl flex items-center justify-center transition ${editorMode === "form" && activeTab === "summary"
                   ? "bg-blue-600 text-white shadow"
                   : (resume.disabledSections || []).includes("summary")
-                  ? "text-zinc-600 hover:text-zinc-400 hover:bg-zinc-800/40"
-                  : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
-              }`}
+                    ? "text-zinc-600 hover:text-zinc-400 hover:bg-zinc-800/40"
+                    : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
+                }`}
             >
               <FileText className="w-5 h-5" />
               {(resume.disabledSections || []).includes("summary") && (
@@ -306,13 +302,12 @@ export default function ResumixStudio() {
                 setEditorMode("form");
               }}
               title={`Work Experience${(resume.disabledSections || []).includes("workExperiences") ? " (Hidden from PDF)" : ""}`}
-              className={`relative w-11 h-11 rounded-xl flex items-center justify-center transition ${
-                editorMode === "form" && activeTab === "experience"
+              className={`relative w-11 h-11 rounded-xl flex items-center justify-center transition ${editorMode === "form" && activeTab === "experience"
                   ? "bg-blue-600 text-white shadow"
                   : (resume.disabledSections || []).includes("workExperiences")
-                  ? "text-zinc-600 hover:text-zinc-400 hover:bg-zinc-800/40"
-                  : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
-              }`}
+                    ? "text-zinc-600 hover:text-zinc-400 hover:bg-zinc-800/40"
+                    : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
+                }`}
             >
               <Briefcase className="w-5 h-5" />
               {(resume.disabledSections || []).includes("workExperiences") && (
@@ -326,13 +321,12 @@ export default function ResumixStudio() {
                 setEditorMode("form");
               }}
               title={`Skills & Expertise${(resume.disabledSections || []).includes("skills") ? " (Hidden from PDF)" : ""}`}
-              className={`relative w-11 h-11 rounded-xl flex items-center justify-center transition ${
-                editorMode === "form" && activeTab === "skills"
+              className={`relative w-11 h-11 rounded-xl flex items-center justify-center transition ${editorMode === "form" && activeTab === "skills"
                   ? "bg-blue-600 text-white shadow"
                   : (resume.disabledSections || []).includes("skills")
-                  ? "text-zinc-600 hover:text-zinc-400 hover:bg-zinc-800/40"
-                  : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
-              }`}
+                    ? "text-zinc-600 hover:text-zinc-400 hover:bg-zinc-800/40"
+                    : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
+                }`}
             >
               <Code2 className="w-5 h-5" />
               {(resume.disabledSections || []).includes("skills") && (
@@ -346,13 +340,12 @@ export default function ResumixStudio() {
                 setEditorMode("form");
               }}
               title={`Key Projects${(resume.disabledSections || []).includes("projects") ? " (Hidden from PDF)" : ""}`}
-              className={`relative w-11 h-11 rounded-xl flex items-center justify-center transition ${
-                editorMode === "form" && activeTab === "projects"
+              className={`relative w-11 h-11 rounded-xl flex items-center justify-center transition ${editorMode === "form" && activeTab === "projects"
                   ? "bg-blue-600 text-white shadow"
                   : (resume.disabledSections || []).includes("projects")
-                  ? "text-zinc-600 hover:text-zinc-400 hover:bg-zinc-800/40"
-                  : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
-              }`}
+                    ? "text-zinc-600 hover:text-zinc-400 hover:bg-zinc-800/40"
+                    : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
+                }`}
             >
               <FolderGit2 className="w-5 h-5" />
               {(resume.disabledSections || []).includes("projects") && (
@@ -366,13 +359,12 @@ export default function ResumixStudio() {
                 setEditorMode("form");
               }}
               title={`Education${(resume.disabledSections || []).includes("educations") ? " (Hidden from PDF)" : ""}`}
-              className={`relative w-11 h-11 rounded-xl flex items-center justify-center transition ${
-                editorMode === "form" && activeTab === "education"
+              className={`relative w-11 h-11 rounded-xl flex items-center justify-center transition ${editorMode === "form" && activeTab === "education"
                   ? "bg-blue-600 text-white shadow"
                   : (resume.disabledSections || []).includes("educations")
-                  ? "text-zinc-600 hover:text-zinc-400 hover:bg-zinc-800/40"
-                  : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
-              }`}
+                    ? "text-zinc-600 hover:text-zinc-400 hover:bg-zinc-800/40"
+                    : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
+                }`}
             >
               <GraduationCap className="w-5 h-5" />
               {(resume.disabledSections || []).includes("educations") && (
@@ -388,11 +380,10 @@ export default function ResumixStudio() {
                 setEditorMode("form");
               }}
               title="Drag & Drop Section Order"
-              className={`w-11 h-11 rounded-xl flex items-center justify-center transition ${
-                editorMode === "form" && activeTab === "layout"
+              className={`w-11 h-11 rounded-xl flex items-center justify-center transition ${editorMode === "form" && activeTab === "layout"
                   ? "bg-blue-600 text-white shadow"
                   : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
-              }`}
+                }`}
             >
               <Layers className="w-5 h-5" />
             </button>
@@ -403,11 +394,10 @@ export default function ResumixStudio() {
                 setEditorMode("form");
               }}
               title="Typography & Font Customizer"
-              className={`w-11 h-11 rounded-xl flex items-center justify-center transition ${
-                editorMode === "form" && activeTab === "typography"
+              className={`w-11 h-11 rounded-xl flex items-center justify-center transition ${editorMode === "form" && activeTab === "typography"
                   ? "bg-blue-600 text-white shadow"
                   : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
-              }`}
+                }`}
             >
               <Type className="w-5 h-5" />
             </button>
@@ -417,11 +407,10 @@ export default function ResumixStudio() {
             <button
               onClick={() => setEditorMode(editorMode === "code" ? "form" : "code")}
               title="LaTeX Code Editor Mode (Advanced TeX)"
-              className={`w-11 h-11 rounded-xl flex items-center justify-center transition ${
-                editorMode === "code"
+              className={`w-11 h-11 rounded-xl flex items-center justify-center transition ${editorMode === "code"
                   ? "bg-sky-600 text-white shadow shadow-sky-500/20"
                   : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/80"
-              }`}
+                }`}
             >
               <Terminal className="w-5 h-5" />
             </button>
@@ -452,22 +441,20 @@ export default function ResumixStudio() {
             <div className="flex items-center p-0.5 bg-zinc-800/90 rounded-lg border border-zinc-700">
               <button
                 onClick={() => setEditorMode("form")}
-                className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-md transition ${
-                  editorMode === "form"
+                className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-md transition ${editorMode === "form"
                     ? "bg-blue-600 text-white shadow-sm"
                     : "text-zinc-400 hover:text-zinc-200"
-                }`}
+                  }`}
               >
                 <PenTool className="w-3.5 h-3.5" />
                 <span>Form</span>
               </button>
               <button
                 onClick={() => setEditorMode("code")}
-                className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-md transition ${
-                  editorMode === "code"
+                className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-md transition ${editorMode === "code"
                     ? "bg-sky-600 text-white shadow-sm"
                     : "text-zinc-400 hover:text-zinc-200"
-                }`}
+                  }`}
               >
                 <Terminal className="w-3.5 h-3.5" />
                 <span>LaTeX Code</span>
@@ -521,266 +508,327 @@ export default function ResumixStudio() {
           </div>
         ) : (
           <div className="flex-1 overflow-y-auto p-5 space-y-5 select-text">
-          {/* PERSONAL INFO TAB */}
-          {activeTab === "personal" && (
-            <div className="space-y-4">
-              <div>
-                <label className="text-xs font-medium text-zinc-400">Full Name</label>
-                <input
-                  type="text"
-                  value={resume.personalInfo.fullName}
-                  onChange={(e) =>
-                    setResume({
-                      ...resume,
-                      personalInfo: { ...resume.personalInfo, fullName: e.target.value },
-                    })
-                  }
-                  className="mt-1 w-full px-3 py-2 text-xs bg-zinc-800/80 border border-zinc-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-medium text-zinc-400">Target Role / Title</label>
-                <input
-                  type="text"
-                  value={resume.personalInfo.jobTitle}
-                  onChange={(e) =>
-                    setResume({
-                      ...resume,
-                      personalInfo: { ...resume.personalInfo, jobTitle: e.target.value },
-                    })
-                  }
-                  className="mt-1 w-full px-3 py-2 text-xs bg-zinc-800/80 border border-zinc-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
+            {/* PERSONAL INFO TAB */}
+            {activeTab === "personal" && (
+              <div className="space-y-4">
                 <div>
-                  <label className="text-xs font-medium text-zinc-400">Email Address</label>
-                  <input
-                    type="email"
-                    value={resume.personalInfo.email}
-                    onChange={(e) =>
-                      setResume({
-                        ...resume,
-                        personalInfo: { ...resume.personalInfo, email: e.target.value },
-                      })
-                    }
-                    className="mt-1 w-full px-3 py-2 text-xs bg-zinc-800/80 border border-zinc-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-zinc-400">Phone</label>
+                  <label className="text-xs font-medium text-zinc-400">Full Name</label>
                   <input
                     type="text"
-                    value={resume.personalInfo.phone}
+                    value={resume.personalInfo.fullName}
                     onChange={(e) =>
                       setResume({
                         ...resume,
-                        personalInfo: { ...resume.personalInfo, phone: e.target.value },
+                        personalInfo: { ...resume.personalInfo, fullName: e.target.value },
                       })
                     }
                     className="mt-1 w-full px-3 py-2 text-xs bg-zinc-800/80 border border-zinc-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
-              </div>
 
-              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-medium text-zinc-400">Location</label>
+                  <label className="text-xs font-medium text-zinc-400">Target Role / Title</label>
                   <input
                     type="text"
-                    value={resume.personalInfo.location}
+                    value={resume.personalInfo.jobTitle}
                     onChange={(e) =>
                       setResume({
                         ...resume,
-                        personalInfo: { ...resume.personalInfo, location: e.target.value },
+                        personalInfo: { ...resume.personalInfo, jobTitle: e.target.value },
                       })
                     }
                     className="mt-1 w-full px-3 py-2 text-xs bg-zinc-800/80 border border-zinc-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
-                <div>
-                  <label className="text-xs font-medium text-zinc-400">Website</label>
-                  <input
-                    type="text"
-                    value={resume.personalInfo.website}
-                    onChange={(e) =>
-                      setResume({
-                        ...resume,
-                        personalInfo: { ...resume.personalInfo, website: e.target.value },
-                      })
-                    }
-                    className="mt-1 w-full px-3 py-2 text-xs bg-zinc-800/80 border border-zinc-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-medium text-zinc-400">LinkedIn</label>
-                  <input
-                    type="text"
-                    value={resume.personalInfo.linkedin}
-                    onChange={(e) =>
-                      setResume({
-                        ...resume,
-                        personalInfo: { ...resume.personalInfo, linkedin: e.target.value },
-                      })
-                    }
-                    className="mt-1 w-full px-3 py-2 text-xs bg-zinc-800/80 border border-zinc-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-zinc-400">GitHub</label>
-                  <input
-                    type="text"
-                    value={resume.personalInfo.github}
-                    onChange={(e) =>
-                      setResume({
-                        ...resume,
-                        personalInfo: { ...resume.personalInfo, github: e.target.value },
-                      })
-                    }
-                    className="mt-1 w-full px-3 py-2 text-xs bg-zinc-800/80 border border-zinc-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* PROFESSIONAL SUMMARY TAB */}
-          {activeTab === "summary" && (
-            <div className="space-y-4">
-              <SectionHeaderBanner
-                title="Professional Summary"
-                sectionId="summary"
-                disabledSections={resume.disabledSections}
-                onToggle={handleToggleSection}
-              />
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-zinc-400 font-medium">Executive Summary</span>
-                <button
-                  onClick={() =>
-                    handleEnhanceBullet("summary", resume.summary, (res) =>
-                      setResume({ ...resume, summary: res })
-                    )
-                  }
-                  disabled={enhancingId === "summary"}
-                  className="flex items-center gap-1.5 text-xs text-blue-400 hover:underline font-medium disabled:opacity-50"
-                >
-                  <Wand2 className="w-3.5 h-3.5" />
-                  {enhancingId === "summary" ? "Polishing..." : "AI Enhance"}
-                </button>
-              </div>
-              <textarea
-                rows={7}
-                value={resume.summary}
-                onChange={(e) => setResume({ ...resume, summary: e.target.value })}
-                className="w-full px-3 py-2.5 text-xs bg-zinc-800/80 border border-zinc-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 leading-relaxed"
-                placeholder="Write your professional summary..."
-              />
-            </div>
-          )}
-
-          {/* WORK EXPERIENCE TAB */}
-          {activeTab === "experience" && (
-            <div className="space-y-4">
-              <SectionHeaderBanner
-                title="Work Experience"
-                sectionId="workExperiences"
-                disabledSections={resume.disabledSections}
-                onToggle={handleToggleSection}
-              />
-
-              <button
-                onClick={() => {
-                  const newExp: WorkExperience = {
-                    id: `exp-${Date.now()}`,
-                    company: "Company Name",
-                    position: "Role / Title",
-                    location: "Remote / City",
-                    startDate: "2024",
-                    endDate: "Present",
-                    current: true,
-                    highlights: ["Spearheaded key initiatives driving efficiency and customer growth."],
-                  };
-                  setResume({ ...resume, workExperiences: [newExp, ...resume.workExperiences] });
-                }}
-                className="w-full flex items-center justify-center gap-1.5 py-2 text-xs font-semibold text-blue-400 bg-blue-950/40 hover:bg-blue-950/60 border border-blue-900/50 rounded-lg transition"
-              >
-                <Plus className="w-3.5 h-3.5" /> Add New Experience
-              </button>
-
-              {resume.workExperiences.map((exp, expIdx) => (
-                <div
-                  key={exp.id}
-                  className="p-3.5 bg-zinc-800/50 rounded-xl border border-zinc-700/60 space-y-2.5"
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="grid grid-cols-2 gap-2 flex-1">
-                      <input
-                        type="text"
-                        placeholder="Company"
-                        value={exp.company}
-                        onChange={(e) => {
-                          const copy = [...resume.workExperiences];
-                          copy[expIdx].company = e.target.value;
-                          setResume({ ...resume, workExperiences: copy });
-                        }}
-                        className="px-2.5 py-1.5 text-xs font-semibold bg-zinc-800 border border-zinc-700 rounded-md"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Position"
-                        value={exp.position}
-                        onChange={(e) => {
-                          const copy = [...resume.workExperiences];
-                          copy[expIdx].position = e.target.value;
-                          setResume({ ...resume, workExperiences: copy });
-                        }}
-                        className="px-2.5 py-1.5 text-xs bg-zinc-800 border border-zinc-700 rounded-md"
-                      />
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <button
-                        onClick={() =>
-                          setResume({
-                            ...resume,
-                            workExperiences: moveItem(resume.workExperiences, expIdx, "up"),
-                          })
-                        }
-                        disabled={expIdx === 0}
-                        className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700/60 rounded disabled:opacity-20 transition"
-                        title="Move Up"
-                      >
-                        <ChevronUp className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={() =>
-                          setResume({
-                            ...resume,
-                            workExperiences: moveItem(resume.workExperiences, expIdx, "down"),
-                          })
-                        }
-                        disabled={expIdx === resume.workExperiences.length - 1}
-                        className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700/60 rounded disabled:opacity-20 transition"
-                        title="Move Down"
-                      >
-                        <ChevronDown className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={() => {
-                          const filtered = resume.workExperiences.filter((item) => item.id !== exp.id);
-                          setResume({ ...resume, workExperiences: filtered });
-                        }}
-                        className="p-1.5 text-zinc-500 hover:text-red-400 rounded-md ml-1 transition"
-                        title="Remove"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-medium text-zinc-400">Email Address</label>
+                    <input
+                      type="email"
+                      value={resume.personalInfo.email}
+                      onChange={(e) =>
+                        setResume({
+                          ...resume,
+                          personalInfo: { ...resume.personalInfo, email: e.target.value },
+                        })
+                      }
+                      className="mt-1 w-full px-3 py-2 text-xs bg-zinc-800/80 border border-zinc-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    />
                   </div>
+                  <div>
+                    <label className="text-xs font-medium text-zinc-400">Phone</label>
+                    <input
+                      type="text"
+                      value={resume.personalInfo.phone}
+                      onChange={(e) =>
+                        setResume({
+                          ...resume,
+                          personalInfo: { ...resume.personalInfo, phone: e.target.value },
+                        })
+                      }
+                      className="mt-1 w-full px-3 py-2 text-xs bg-zinc-800/80 border border-zinc-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-medium text-zinc-400">Location</label>
+                    <input
+                      type="text"
+                      value={resume.personalInfo.location}
+                      onChange={(e) =>
+                        setResume({
+                          ...resume,
+                          personalInfo: { ...resume.personalInfo, location: e.target.value },
+                        })
+                      }
+                      className="mt-1 w-full px-3 py-2 text-xs bg-zinc-800/80 border border-zinc-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-zinc-400">Website</label>
+                    <input
+                      type="text"
+                      value={resume.personalInfo.website}
+                      onChange={(e) =>
+                        setResume({
+                          ...resume,
+                          personalInfo: { ...resume.personalInfo, website: e.target.value },
+                        })
+                      }
+                      className="mt-1 w-full px-3 py-2 text-xs bg-zinc-800/80 border border-zinc-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-medium text-zinc-400">LinkedIn</label>
+                    <input
+                      type="text"
+                      value={resume.personalInfo.linkedin}
+                      onChange={(e) =>
+                        setResume({
+                          ...resume,
+                          personalInfo: { ...resume.personalInfo, linkedin: e.target.value },
+                        })
+                      }
+                      className="mt-1 w-full px-3 py-2 text-xs bg-zinc-800/80 border border-zinc-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-zinc-400">GitHub</label>
+                    <input
+                      type="text"
+                      value={resume.personalInfo.github}
+                      onChange={(e) =>
+                        setResume({
+                          ...resume,
+                          personalInfo: { ...resume.personalInfo, github: e.target.value },
+                        })
+                      }
+                      className="mt-1 w-full px-3 py-2 text-xs bg-zinc-800/80 border border-zinc-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* PROFESSIONAL SUMMARY TAB */}
+            {activeTab === "summary" && (
+              <div className="space-y-4">
+                <SectionHeaderBanner
+                  title="Professional Summary"
+                  sectionId="summary"
+                  disabledSections={resume.disabledSections}
+                  onToggle={handleToggleSection}
+                />
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-zinc-400 font-medium">Executive Summary</span>
+                  <button
+                    onClick={() =>
+                      handleEnhanceBullet("summary", resume.summary, (res) =>
+                        setResume({ ...resume, summary: res })
+                      )
+                    }
+                    disabled={enhancingId === "summary"}
+                    className="flex items-center gap-1.5 text-xs text-blue-400 hover:underline font-medium disabled:opacity-50"
+                  >
+                    <Wand2 className="w-3.5 h-3.5" />
+                    {enhancingId === "summary" ? "Polishing..." : "AI Enhance"}
+                  </button>
+                </div>
+                <textarea
+                  rows={7}
+                  value={resume.summary}
+                  onChange={(e) => setResume({ ...resume, summary: e.target.value })}
+                  className="w-full px-3 py-2.5 text-xs bg-zinc-800/80 border border-zinc-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 leading-relaxed"
+                  placeholder="Write your professional summary..."
+                />
+              </div>
+            )}
+
+            {/* WORK EXPERIENCE TAB */}
+            {activeTab === "experience" && (
+              <div className="space-y-4">
+                <SectionHeaderBanner
+                  title="Work Experience"
+                  sectionId="workExperiences"
+                  disabledSections={resume.disabledSections}
+                  onToggle={handleToggleSection}
+                />
+
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs text-zinc-400 font-medium">
+                    Experience History{" "}
+                    <span className="text-zinc-500">
+                      ({resume.workExperiences.filter((w) => !w.disabled).length} of {resume.workExperiences.length} visible in PDF)
+                    </span>
+                  </span>
+                  {resume.workExperiences.some((w) => w.disabled) && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const enabled = resume.workExperiences.map((w) => ({ ...w, disabled: false }));
+                        setResume({ ...resume, workExperiences: enabled });
+                      }}
+                      className="text-[11px] text-emerald-400 hover:underline font-medium"
+                    >
+                      Show All
+                    </button>
+                  )}
+                </div>
+
+                <button
+                  onClick={() => {
+                    const newExp: WorkExperience = {
+                      id: `exp-${Date.now()}`,
+                      company: "Company Name",
+                      position: "Role / Title",
+                      location: "Remote / City",
+                      startDate: "2024",
+                      endDate: "Present",
+                      current: true,
+                      highlights: ["Spearheaded key initiatives driving efficiency and customer growth."],
+                    };
+                    setResume({ ...resume, workExperiences: [newExp, ...resume.workExperiences] });
+                  }}
+                  className="w-full flex items-center justify-center gap-1.5 py-2 text-xs font-semibold text-blue-400 bg-blue-950/40 hover:bg-blue-950/60 border border-blue-900/50 rounded-lg transition"
+                >
+                  <Plus className="w-3.5 h-3.5" /> Add New Experience
+                </button>
+
+                        {resume.workExperiences.map((exp, expIdx) => {
+                          const isExpDisabled = exp.disabled === true;
+                          return (
+                  <div
+                    key={exp.id}
+                    className={`p-3.5 rounded-xl border space-y-2.5 transition ${
+                      isExpDisabled
+                        ? "bg-zinc-900/40 border-zinc-800/80 opacity-60"
+                        : "bg-zinc-800/50 border-zinc-700/60"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="grid grid-cols-2 gap-2 flex-1">
+                        <input
+                          type="text"
+                          placeholder="Company"
+                          value={exp.company}
+                          onChange={(e) => {
+                            const copy = [...resume.workExperiences];
+                            copy[expIdx].company = e.target.value;
+                            setResume({ ...resume, workExperiences: copy });
+                          }}
+                          className={`px-2.5 py-1.5 text-xs font-semibold bg-zinc-800 border rounded-md ${
+                            isExpDisabled
+                              ? "line-through text-zinc-500 border-zinc-700/50"
+                              : "text-zinc-200 border-zinc-700"
+                          }`}
+                        />
+                        <div className="flex items-center gap-1.5">
+                          <input
+                            type="text"
+                            placeholder="Position"
+                            value={exp.position}
+                            onChange={(e) => {
+                              const copy = [...resume.workExperiences];
+                              copy[expIdx].position = e.target.value;
+                              setResume({ ...resume, workExperiences: copy });
+                            }}
+                            className={`flex-1 px-2.5 py-1.5 text-xs bg-zinc-800 border rounded-md ${
+                              isExpDisabled
+                                ? "text-zinc-500 border-zinc-700/50"
+                                : "text-zinc-200 border-zinc-700"
+                            }`}
+                          />
+                          {isExpDisabled && (
+                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 font-medium shrink-0">
+                              Hidden
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() =>
+                            setResume({
+                              ...resume,
+                              workExperiences: moveItem(resume.workExperiences, expIdx, "up"),
+                            })
+                          }
+                          disabled={expIdx === 0}
+                          className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700/60 rounded disabled:opacity-20 transition"
+                          title="Move Up"
+                        >
+                          <ChevronUp className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() =>
+                            setResume({
+                              ...resume,
+                              workExperiences: moveItem(resume.workExperiences, expIdx, "down"),
+                            })
+                          }
+                          disabled={expIdx === resume.workExperiences.length - 1}
+                          className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700/60 rounded disabled:opacity-20 transition"
+                          title="Move Down"
+                        >
+                          <ChevronDown className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const copy = [...resume.workExperiences];
+                            copy[expIdx] = {
+                              ...copy[expIdx],
+                              disabled: !copy[expIdx].disabled,
+                            };
+                            setResume({ ...resume, workExperiences: copy });
+                          }}
+                          className={`p-1.5 rounded transition ${
+                            isExpDisabled
+                              ? "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800"
+                              : "text-emerald-400 hover:bg-emerald-950/60"
+                          }`}
+                          title={isExpDisabled ? "Show this experience in PDF" : "Hide this experience from PDF"}
+                        >
+                          {isExpDisabled ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                        <button
+                          onClick={() => {
+                            const filtered = resume.workExperiences.filter((item) => item.id !== exp.id);
+                            setResume({ ...resume, workExperiences: filtered });
+                          }}
+                          className="p-1.5 text-zinc-500 hover:text-red-400 rounded-md ml-0.5 transition"
+                          title="Remove"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
 
                   <div className="grid grid-cols-3 gap-2">
                     <input
@@ -859,518 +907,642 @@ export default function ResumixStudio() {
                     </button>
                   </div>
                 </div>
-              ))}
-            </div>
+                      );
+            })}
+                    </div>
           )}
 
-          {/* SKILLS TAB */}
-          {activeTab === "skills" && (
-            <div className="space-y-4">
-              <SectionHeaderBanner
-                title="Skills & Expertise"
-                sectionId="skills"
-                disabledSections={resume.disabledSections}
-                onToggle={handleToggleSection}
-              />
+                    {/* SKILLS TAB */}
+                    {activeTab === "skills" && (
+                      <div className="space-y-4">
+                        <SectionHeaderBanner
+                          title="Skills & Expertise"
+                          sectionId="skills"
+                          disabledSections={resume.disabledSections}
+                          onToggle={handleToggleSection}
+                        />
 
-              {/* Automatic & Manual Override Action Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                {/* 1. Automatic AI Job Tailor */}
-                <button
-                  type="button"
-                  onClick={() => setIsGeminiTailorOpen(true)}
-                  className="flex items-center gap-3 p-3 text-left rounded-xl bg-gradient-to-br from-sky-950/60 to-blue-950/40 hover:from-sky-900/60 hover:to-blue-900/50 border border-sky-800/60 hover:border-sky-600 transition shadow-sm group"
-                >
-                  <div className="p-2 rounded-lg bg-sky-600/20 text-sky-400 border border-sky-500/30 group-hover:bg-sky-600 group-hover:text-white transition shrink-0">
-                    <Sparkles className="w-4 h-4" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-xs font-semibold text-zinc-100 group-hover:text-sky-300 transition">
-                        AI Job Tailor
-                      </span>
-                      <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-sky-900 text-sky-300 font-bold border border-sky-700/60">
-                        Gemini
-                      </span>
+                        {/* Automatic & Manual Override Action Cards */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                          {/* 1. Automatic AI Job Tailor */}
+                          <button
+                            type="button"
+                            onClick={() => setIsGeminiTailorOpen(true)}
+                            className="flex items-center gap-3 p-3 text-left rounded-xl bg-gradient-to-br from-sky-950/60 to-blue-950/40 hover:from-sky-900/60 hover:to-blue-900/50 border border-sky-800/60 hover:border-sky-600 transition shadow-sm group"
+                          >
+                            <div className="p-2 rounded-lg bg-sky-600/20 text-sky-400 border border-sky-500/30 group-hover:bg-sky-600 group-hover:text-white transition shrink-0">
+                              <Sparkles className="w-4 h-4" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-xs font-semibold text-zinc-100 group-hover:text-sky-300 transition">
+                                  AI Job Tailor
+                                </span>
+                                <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-sky-900 text-sky-300 font-bold border border-sky-700/60">
+                                  Gemini
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-zinc-400 truncate mt-0.5">
+                                Paste job requirements to auto-tailor skills
+                              </p>
+                            </div>
+                          </button>
+
+                          {/* 2. Manual Override Catalog Picker */}
+                          <button
+                            type="button"
+                            onClick={() => setIsSkillCatalogOpen(true)}
+                            className="flex items-center gap-3 p-3 text-left rounded-xl bg-gradient-to-br from-emerald-950/60 to-teal-950/40 hover:from-emerald-900/60 hover:to-teal-900/50 border border-emerald-800/60 hover:border-emerald-600 transition shadow-sm group"
+                          >
+                            <div className="p-2 rounded-lg bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 group-hover:bg-emerald-600 group-hover:text-white transition shrink-0">
+                              <BookOpen className="w-4 h-4" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-xs font-semibold text-zinc-100 group-hover:text-emerald-300 transition">
+                                  Manual Override
+                                </span>
+                                <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-emerald-900 text-emerald-300 font-bold border border-emerald-700/60">
+                                  Catalog
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-zinc-400 truncate mt-0.5">
+                                Browse & check languages and frameworks
+                              </p>
+                            </div>
+                          </button>
+                        </div>
+
+                        <div className="flex items-center justify-between gap-2 pt-1">
+                          <span className="text-xs text-zinc-400 font-medium">Skill Categories</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newSkillCat = {
+                                id: `skill-${Date.now()}`,
+                                categoryName: "New Category",
+                                items: ["Skill 1", "Skill 2"],
+                              };
+                              setResume({ ...resume, skills: [...resume.skills, newSkillCat] });
+                            }}
+                            className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-blue-400 bg-blue-950/40 hover:bg-blue-950/60 border border-blue-900/50 rounded-lg transition"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                            <span>Add Skill Category</span>
+                          </button>
+                        </div>
+
+                        <div className="space-y-3">
+                          {resume.skills.map((skillGroup, idx) => {
+                            const isCatDisabled = skillGroup.disabled === true;
+                            return (
+                              <div
+                                key={skillGroup.id}
+                                className={`p-3.5 rounded-xl border space-y-2.5 transition ${isCatDisabled
+                                    ? "bg-zinc-900/50 border-zinc-800/80 opacity-60"
+                                    : "bg-zinc-800/50 border-zinc-700/60"
+                                  }`}
+                              >
+                                <div className="flex items-center justify-between gap-2">
+                                  <div className="flex items-center gap-2 flex-1">
+                                    <input
+                                      type="text"
+                                      value={skillGroup.categoryName}
+                                      onChange={(e) => {
+                                        const copy = [...resume.skills];
+                                        copy[idx].categoryName = e.target.value;
+                                        setResume({ ...resume, skills: copy });
+                                      }}
+                                      placeholder="Category Name (e.g. Languages & Frameworks)"
+                                      className={`flex-1 px-2.5 py-1.5 text-xs font-semibold bg-zinc-800 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 ${isCatDisabled
+                                          ? "line-through text-zinc-500 border-zinc-700/50"
+                                          : "text-zinc-200 border-zinc-700"
+                                        }`}
+                                    />
+                                    {isCatDisabled && (
+                                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 font-medium shrink-0">
+                                        Hidden
+                                      </span>
+                                    )}
+                                  </div>
+
+                                  {/* Reorder and Toggle Controls */}
+                                  <div className="flex items-center gap-1 shrink-0">
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        setResume({
+                                          ...resume,
+                                          skills: moveItem(resume.skills, idx, "up"),
+                                        })
+                                      }
+                                      disabled={idx === 0}
+                                      className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700/60 rounded disabled:opacity-20 transition"
+                                      title="Move Category Up"
+                                    >
+                                      <ChevronUp className="w-3.5 h-3.5" />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        setResume({
+                                          ...resume,
+                                          skills: moveItem(resume.skills, idx, "down"),
+                                        })
+                                      }
+                                      disabled={idx === resume.skills.length - 1}
+                                      className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700/60 rounded disabled:opacity-20 transition"
+                                      title="Move Category Down"
+                                    >
+                                      <ChevronDown className="w-3.5 h-3.5" />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const copy = [...resume.skills];
+                                        copy[idx] = {
+                                          ...copy[idx],
+                                          disabled: !copy[idx].disabled,
+                                        };
+                                        setResume({ ...resume, skills: copy });
+                                      }}
+                                      className={`p-1.5 rounded transition ${isCatDisabled
+                                          ? "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800"
+                                          : "text-emerald-400 hover:bg-emerald-950/60"
+                                        }`}
+                                      title={isCatDisabled ? "Enable this skill category in PDF" : "Disable/hide this skill category from PDF"}
+                                    >
+                                      {isCatDisabled ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const filtered = resume.skills.filter((item) => item.id !== skillGroup.id);
+                                        setResume({ ...resume, skills: filtered });
+                                      }}
+                                      className="p-1.5 text-zinc-500 hover:text-red-400 hover:bg-red-950/30 rounded transition"
+                                      title="Delete Category"
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                    </button>
+                                  </div>
+                                </div>
+
+                                <textarea
+                                  rows={2}
+                                  value={skillGroup.items.join(", ")}
+                                  onChange={(e) => {
+                                    const copy = [...resume.skills];
+                                    copy[idx].items = e.target.value.split(",").map((s) => s.trim());
+                                    setResume({ ...resume, skills: copy });
+                                  }}
+                                  placeholder="Comma-separated items (e.g. React, TypeScript, Next.js)"
+                                  className="w-full px-2.5 py-1.5 text-xs bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 leading-relaxed"
+                                />
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* PROJECTS TAB */}
+                    {activeTab === "projects" && (
+                      <div className="space-y-4">
+                        <SectionHeaderBanner
+                          title="Key Projects"
+                          sectionId="projects"
+                          disabledSections={resume.disabledSections}
+                          onToggle={handleToggleSection}
+                        />
+
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-xs text-zinc-400 font-medium">
+                            Project Portfolio{" "}
+                            <span className="text-zinc-500">
+                              ({resume.projects.filter((p) => !p.disabled).length} of {resume.projects.length} visible in PDF)
+                            </span>
+                          </span>
+                          {resume.projects.some((p) => p.disabled) && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const enabled = resume.projects.map((p) => ({ ...p, disabled: false }));
+                                setResume({ ...resume, projects: enabled });
+                              }}
+                              className="text-[11px] text-emerald-400 hover:underline font-medium"
+                            >
+                              Show All
+                            </button>
+                          )}
+                        </div>
+
+                        <button
+                          onClick={() => {
+                            const newProj: Project = {
+                              id: `proj-${Date.now()}`,
+                              name: "Project Name",
+                              description: "High impact software tool solving a real developer problem.",
+                              technologies: ["React", "TypeScript", "Node.js"],
+                              highlights: ["Built scalable workflows improving performance by 30%."],
+                            };
+                            setResume({ ...resume, projects: [...resume.projects, newProj] });
+                          }}
+                          className="w-full flex items-center justify-center gap-1.5 py-2 text-xs font-semibold text-blue-400 bg-blue-950/40 hover:bg-blue-950/60 border border-blue-900/50 rounded-lg transition"
+                        >
+                          <Plus className="w-3.5 h-3.5" /> Add Project
+                        </button>
+
+                              {resume.projects.map((proj, projIdx) => {
+                                const isProjDisabled = proj.disabled === true;
+                                return (
+                  <div
+                    key={proj.id}
+                    className={`p-3.5 rounded-xl border space-y-2 transition ${
+                      isProjDisabled
+                        ? "bg-zinc-900/40 border-zinc-800/80 opacity-60"
+                        : "bg-zinc-800/50 border-zinc-700/60"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 flex-1">
+                        <input
+                          type="text"
+                          placeholder="Project Name"
+                          value={proj.name}
+                          onChange={(e) => {
+                            const copy = [...resume.projects];
+                            copy[projIdx].name = e.target.value;
+                            setResume({ ...resume, projects: copy });
+                          }}
+                          className={`flex-1 px-2.5 py-1.5 text-xs font-semibold bg-zinc-800 border rounded-md ${
+                            isProjDisabled
+                              ? "line-through text-zinc-500 border-zinc-700/50"
+                              : "text-zinc-200 border-zinc-700"
+                          }`}
+                        />
+                        {isProjDisabled && (
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 font-medium shrink-0">
+                            Hidden
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() =>
+                            setResume({
+                              ...resume,
+                              projects: moveItem(resume.projects, projIdx, "up"),
+                            })
+                          }
+                          disabled={projIdx === 0}
+                          className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700/60 rounded disabled:opacity-20 transition"
+                          title="Move Up"
+                        >
+                          <ChevronUp className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() =>
+                            setResume({
+                              ...resume,
+                              projects: moveItem(resume.projects, projIdx, "down"),
+                            })
+                          }
+                          disabled={projIdx === resume.projects.length - 1}
+                          className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700/60 rounded disabled:opacity-20 transition"
+                          title="Move Down"
+                        >
+                          <ChevronDown className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const copy = [...resume.projects];
+                            copy[projIdx] = {
+                              ...copy[projIdx],
+                              disabled: !copy[projIdx].disabled,
+                            };
+                            setResume({ ...resume, projects: copy });
+                          }}
+                          className={`p-1.5 rounded transition ${
+                            isProjDisabled
+                              ? "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800"
+                              : "text-emerald-400 hover:bg-emerald-950/60"
+                          }`}
+                          title={isProjDisabled ? "Show this project in PDF" : "Hide this project from PDF"}
+                        >
+                          {isProjDisabled ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                        <button
+                          onClick={() => {
+                            const filtered = resume.projects.filter((item) => item.id !== proj.id);
+                            setResume({ ...resume, projects: filtered });
+                          }}
+                          className="p-1.5 text-zinc-500 hover:text-red-400 rounded-md ml-0.5 transition"
+                          title="Remove"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
-                    <p className="text-[11px] text-zinc-400 truncate mt-0.5">
-                      Paste job requirements to auto-tailor skills
-                    </p>
+                    <input
+                      type="text"
+                      placeholder="Technologies (comma separated)"
+                      value={proj.technologies.join(", ")}
+                      onChange={(e) => {
+                        const copy = [...resume.projects];
+                        copy[projIdx].technologies = e.target.value.split(",").map((s) => s.trim());
+                        setResume({ ...resume, projects: copy });
+                      }}
+                      className="w-full px-2.5 py-1.5 text-xs bg-zinc-800 border border-zinc-700 rounded-md"
+                    />
+                    <textarea
+                      rows={2}
+                      placeholder="Brief description"
+                      value={proj.description}
+                      onChange={(e) => {
+                        const copy = [...resume.projects];
+                        copy[projIdx].description = e.target.value;
+                        setResume({ ...resume, projects: copy });
+                      }}
+                      className="w-full px-2.5 py-1.5 text-xs bg-zinc-800 border border-zinc-700 rounded-md"
+                    />
                   </div>
-                </button>
+                            );
+              })}
+                          </div>
+                        )}
 
-                {/* 2. Manual Override Catalog Picker */}
-                <button
-                  type="button"
-                  onClick={() => setIsSkillCatalogOpen(true)}
-                  className="flex items-center gap-3 p-3 text-left rounded-xl bg-gradient-to-br from-emerald-950/60 to-teal-950/40 hover:from-emerald-900/60 hover:to-teal-900/50 border border-emerald-800/60 hover:border-emerald-600 transition shadow-sm group"
-                >
-                  <div className="p-2 rounded-lg bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 group-hover:bg-emerald-600 group-hover:text-white transition shrink-0">
-                    <BookOpen className="w-4 h-4" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-xs font-semibold text-zinc-100 group-hover:text-emerald-300 transition">
-                        Manual Override
-                      </span>
-                      <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-emerald-900 text-emerald-300 font-bold border border-emerald-700/60">
-                        Catalog
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-zinc-400 truncate mt-0.5">
-                      Browse & check languages and frameworks
-                    </p>
-                  </div>
-                </button>
-              </div>
+                        {/* EDUCATION TAB */}
+                        {activeTab === "education" && (
+                          <div className="space-y-4">
+                            <SectionHeaderBanner
+                              title="Education"
+                              sectionId="educations"
+                              disabledSections={resume.disabledSections}
+                              onToggle={handleToggleSection}
+                            />
 
-              <div className="flex items-center justify-between gap-2 pt-1">
-                <span className="text-xs text-zinc-400 font-medium">Skill Categories</span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const newSkillCat = {
-                      id: `skill-${Date.now()}`,
-                      categoryName: "New Category",
-                      items: ["Skill 1", "Skill 2"],
-                    };
-                    setResume({ ...resume, skills: [...resume.skills, newSkillCat] });
-                  }}
-                  className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-blue-400 bg-blue-950/40 hover:bg-blue-950/60 border border-blue-900/50 rounded-lg transition"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>Add Skill Category</span>
-                </button>
-              </div>
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="text-xs text-zinc-400 font-medium">
+                                Academic History{" "}
+                                <span className="text-zinc-500">
+                                  ({resume.educations.filter((e) => !e.disabled).length} of {resume.educations.length} visible in PDF)
+                                </span>
+                              </span>
+                              {resume.educations.some((e) => e.disabled) && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const enabled = resume.educations.map((e) => ({ ...e, disabled: false }));
+                                    setResume({ ...resume, educations: enabled });
+                                  }}
+                                  className="text-[11px] text-emerald-400 hover:underline font-medium"
+                                >
+                                  Show All
+                                </button>
+                              )}
+                            </div>
 
-              <div className="space-y-3">
-                {resume.skills.map((skillGroup, idx) => {
-                  const isCatDisabled = skillGroup.disabled === true;
-                  return (
-                    <div
-                      key={skillGroup.id}
-                      className={`p-3.5 rounded-xl border space-y-2.5 transition ${
-                        isCatDisabled
-                          ? "bg-zinc-900/50 border-zinc-800/80 opacity-60"
-                          : "bg-zinc-800/50 border-zinc-700/60"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-2 flex-1">
+                            <button
+                              onClick={() => {
+                                const newEdu: Education = {
+                                  id: `edu-${Date.now()}`,
+                                  institution: "University / College Name",
+                                  degree: "Bachelor of Science",
+                                  fieldOfStudy: "Computer Science",
+                                  location: "City, Country",
+                                  startDate: "2020",
+                                  endDate: "2024",
+                                };
+                                setResume({ ...resume, educations: [...resume.educations, newEdu] });
+                              }}
+                              className="w-full flex items-center justify-center gap-1.5 py-2 text-xs font-semibold text-blue-400 bg-blue-950/40 hover:bg-blue-950/60 border border-blue-900/50 rounded-lg transition"
+                            >
+                              <Plus className="w-3.5 h-3.5" /> Add Education
+                            </button>
+
+                                    {resume.educations.map((edu, eduIdx) => {
+                                      const isEduDisabled = edu.disabled === true;
+                                      return (
+                  <div
+                    key={edu.id}
+                    className={`p-3.5 rounded-xl border space-y-2 transition ${
+                      isEduDisabled
+                        ? "bg-zinc-900/40 border-zinc-800/80 opacity-60"
+                        : "bg-zinc-800/50 border-zinc-700/60"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="grid grid-cols-2 gap-2 flex-1">
+                        <input
+                          type="text"
+                          placeholder="Degree"
+                          value={edu.degree}
+                          onChange={(e) => {
+                            const copy = [...resume.educations];
+                            copy[eduIdx].degree = e.target.value;
+                            setResume({ ...resume, educations: copy });
+                          }}
+                          className={`px-2.5 py-1.5 text-xs bg-zinc-800 border rounded-md ${
+                            isEduDisabled
+                              ? "line-through text-zinc-500 border-zinc-700/50"
+                              : "text-zinc-200 border-zinc-700"
+                          }`}
+                        />
+                        <div className="flex items-center gap-1.5">
                           <input
                             type="text"
-                            value={skillGroup.categoryName}
+                            placeholder="Institution"
+                            value={edu.institution}
                             onChange={(e) => {
-                              const copy = [...resume.skills];
-                              copy[idx].categoryName = e.target.value;
-                              setResume({ ...resume, skills: copy });
+                              const copy = [...resume.educations];
+                              copy[eduIdx].institution = e.target.value;
+                              setResume({ ...resume, educations: copy });
                             }}
-                            placeholder="Category Name (e.g. Languages & Frameworks)"
-                            className={`flex-1 px-2.5 py-1.5 text-xs font-semibold bg-zinc-800 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 ${
-                              isCatDisabled
-                                ? "line-through text-zinc-500 border-zinc-700/50"
+                            className={`flex-1 px-2.5 py-1.5 text-xs bg-zinc-800 border rounded-md ${
+                              isEduDisabled
+                                ? "text-zinc-500 border-zinc-700/50"
                                 : "text-zinc-200 border-zinc-700"
                             }`}
                           />
-                          {isCatDisabled && (
+                          {isEduDisabled && (
                             <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-400 font-medium shrink-0">
                               Hidden
                             </span>
                           )}
                         </div>
-
-                        {/* Reorder and Toggle Controls */}
-                        <div className="flex items-center gap-1 shrink-0">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setResume({
-                                ...resume,
-                                skills: moveItem(resume.skills, idx, "up"),
-                              })
-                            }
-                            disabled={idx === 0}
-                            className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700/60 rounded disabled:opacity-20 transition"
-                            title="Move Category Up"
-                          >
-                            <ChevronUp className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setResume({
-                                ...resume,
-                                skills: moveItem(resume.skills, idx, "down"),
-                              })
-                            }
-                            disabled={idx === resume.skills.length - 1}
-                            className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700/60 rounded disabled:opacity-20 transition"
-                            title="Move Category Down"
-                          >
-                            <ChevronDown className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              const copy = [...resume.skills];
-                              copy[idx] = {
-                                ...copy[idx],
-                                disabled: !copy[idx].disabled,
-                              };
-                              setResume({ ...resume, skills: copy });
-                            }}
-                            className={`p-1.5 rounded transition ${
-                              isCatDisabled
-                                ? "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800"
-                                : "text-emerald-400 hover:bg-emerald-950/60"
-                            }`}
-                            title={isCatDisabled ? "Enable this skill category in PDF" : "Disable/hide this skill category from PDF"}
-                          >
-                            {isCatDisabled ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              const filtered = resume.skills.filter((item) => item.id !== skillGroup.id);
-                              setResume({ ...resume, skills: filtered });
-                            }}
-                            className="p-1.5 text-zinc-500 hover:text-red-400 hover:bg-red-950/30 rounded transition"
-                            title="Delete Category"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
                       </div>
-
-                      <textarea
-                        rows={2}
-                        value={skillGroup.items.join(", ")}
-                        onChange={(e) => {
-                          const copy = [...resume.skills];
-                          copy[idx].items = e.target.value.split(",").map((s) => s.trim());
-                          setResume({ ...resume, skills: copy });
-                        }}
-                        placeholder="Comma-separated items (e.g. React, TypeScript, Next.js)"
-                        className="w-full px-2.5 py-1.5 text-xs bg-zinc-800 border border-zinc-700 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 leading-relaxed"
-                      />
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() =>
+                            setResume({
+                              ...resume,
+                              educations: moveItem(resume.educations, eduIdx, "up"),
+                            })
+                          }
+                          disabled={eduIdx === 0}
+                          className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700/60 rounded disabled:opacity-20 transition"
+                          title="Move Up"
+                        >
+                          <ChevronUp className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() =>
+                            setResume({
+                              ...resume,
+                              educations: moveItem(resume.educations, eduIdx, "down"),
+                            })
+                          }
+                          disabled={eduIdx === resume.educations.length - 1}
+                          className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700/60 rounded disabled:opacity-20 transition"
+                          title="Move Down"
+                        >
+                          <ChevronDown className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const copy = [...resume.educations];
+                            copy[eduIdx] = {
+                              ...copy[eduIdx],
+                              disabled: !copy[eduIdx].disabled,
+                            };
+                            setResume({ ...resume, educations: copy });
+                          }}
+                          className={`p-1.5 rounded transition ${
+                            isEduDisabled
+                              ? "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800"
+                              : "text-emerald-400 hover:bg-emerald-950/60"
+                          }`}
+                          title={isEduDisabled ? "Show this education in PDF" : "Hide this education from PDF"}
+                        >
+                          {isEduDisabled ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                        <button
+                          onClick={() => {
+                            const filtered = resume.educations.filter((item) => item.id !== edu.id);
+                            setResume({ ...resume, educations: filtered });
+                          }}
+                          className="p-1.5 text-zinc-500 hover:text-red-400 rounded-md ml-0.5 transition"
+                          title="Remove"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* PROJECTS TAB */}
-          {activeTab === "projects" && (
-            <div className="space-y-4">
-              <SectionHeaderBanner
-                title="Key Projects"
-                sectionId="projects"
-                disabledSections={resume.disabledSections}
-                onToggle={handleToggleSection}
-              />
-
-              <button
-                onClick={() => {
-                  const newProj: Project = {
-                    id: `proj-${Date.now()}`,
-                    name: "Project Name",
-                    description: "High impact software tool solving a real developer problem.",
-                    technologies: ["React", "TypeScript", "Node.js"],
-                    highlights: ["Built scalable workflows improving performance by 30%."],
-                  };
-                  setResume({ ...resume, projects: [...resume.projects, newProj] });
-                }}
-                className="w-full flex items-center justify-center gap-1.5 py-2 text-xs font-semibold text-blue-400 bg-blue-950/40 hover:bg-blue-950/60 border border-blue-900/50 rounded-lg transition"
-              >
-                <Plus className="w-3.5 h-3.5" /> Add Project
-              </button>
-
-              {resume.projects.map((proj, projIdx) => (
-                <div key={proj.id} className="p-3.5 bg-zinc-800/50 rounded-xl border border-zinc-700/60 space-y-2">
-                  <div className="flex items-center justify-between gap-2">
                     <input
                       type="text"
-                      placeholder="Project Name"
-                      value={proj.name}
+                      placeholder="Field of Study"
+                      value={edu.fieldOfStudy}
                       onChange={(e) => {
-                        const copy = [...resume.projects];
-                        copy[projIdx].name = e.target.value;
-                        setResume({ ...resume, projects: copy });
+                        const copy = [...resume.educations];
+                        copy[eduIdx].fieldOfStudy = e.target.value;
+                        setResume({ ...resume, educations: copy });
                       }}
-                      className="flex-1 px-2.5 py-1.5 text-xs font-semibold bg-zinc-800 border border-zinc-700 rounded-md"
+                      className="w-full px-2.5 py-1.5 text-xs bg-zinc-800 border border-zinc-700 rounded-md"
                     />
-                    <div className="flex items-center gap-1">
-                      <button
-                        onClick={() =>
-                          setResume({
-                            ...resume,
-                            projects: moveItem(resume.projects, projIdx, "up"),
-                          })
-                        }
-                        disabled={projIdx === 0}
-                        className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700/60 rounded disabled:opacity-20 transition"
-                        title="Move Up"
-                      >
-                        <ChevronUp className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={() =>
-                          setResume({
-                            ...resume,
-                            projects: moveItem(resume.projects, projIdx, "down"),
-                          })
-                        }
-                        disabled={projIdx === resume.projects.length - 1}
-                        className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700/60 rounded disabled:opacity-20 transition"
-                        title="Move Down"
-                      >
-                        <ChevronDown className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={() => {
-                          const filtered = resume.projects.filter((item) => item.id !== proj.id);
-                          setResume({ ...resume, projects: filtered });
-                        }}
-                        className="p-1.5 text-zinc-500 hover:text-red-400 rounded-md ml-1 transition"
-                        title="Remove"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Technologies (comma separated)"
-                    value={proj.technologies.join(", ")}
-                    onChange={(e) => {
-                      const copy = [...resume.projects];
-                      copy[projIdx].technologies = e.target.value.split(",").map((s) => s.trim());
-                      setResume({ ...resume, projects: copy });
-                    }}
-                    className="w-full px-2.5 py-1.5 text-xs bg-zinc-800 border border-zinc-700 rounded-md"
-                  />
-                  <textarea
-                    rows={2}
-                    placeholder="Brief description"
-                    value={proj.description}
-                    onChange={(e) => {
-                      const copy = [...resume.projects];
-                      copy[projIdx].description = e.target.value;
-                      setResume({ ...resume, projects: copy });
-                    }}
-                    className="w-full px-2.5 py-1.5 text-xs bg-zinc-800 border border-zinc-700 rounded-md"
-                  />
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* EDUCATION TAB */}
-          {activeTab === "education" && (
-            <div className="space-y-4">
-              <SectionHeaderBanner
-                title="Education"
-                sectionId="educations"
-                disabledSections={resume.disabledSections}
-                onToggle={handleToggleSection}
-              />
-
-              <button
-                onClick={() => {
-                  const newEdu: Education = {
-                    id: `edu-${Date.now()}`,
-                    institution: "University / College Name",
-                    degree: "Bachelor of Science",
-                    fieldOfStudy: "Computer Science",
-                    location: "City, Country",
-                    startDate: "2020",
-                    endDate: "2024",
-                  };
-                  setResume({ ...resume, educations: [...resume.educations, newEdu] });
-                }}
-                className="w-full flex items-center justify-center gap-1.5 py-2 text-xs font-semibold text-blue-400 bg-blue-950/40 hover:bg-blue-950/60 border border-blue-900/50 rounded-lg transition"
-              >
-                <Plus className="w-3.5 h-3.5" /> Add Education
-              </button>
-
-              {resume.educations.map((edu, eduIdx) => (
-                <div key={edu.id} className="p-3.5 bg-zinc-800/50 rounded-xl border border-zinc-700/60 space-y-2">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="grid grid-cols-2 gap-2 flex-1">
+                    <div className="flex gap-2">
                       <input
                         type="text"
-                        placeholder="Degree"
-                        value={edu.degree}
+                        placeholder="Start - End"
+                        value={`${edu.startDate} - ${edu.endDate}`}
                         onChange={(e) => {
+                          const parts = e.target.value.split("-").map((s) => s.trim());
                           const copy = [...resume.educations];
-                          copy[eduIdx].degree = e.target.value;
+                          copy[eduIdx].startDate = parts[0] || "";
+                          copy[eduIdx].endDate = parts[1] || "";
                           setResume({ ...resume, educations: copy });
                         }}
-                        className="px-2.5 py-1.5 text-xs bg-zinc-800 border border-zinc-700 rounded-md"
+                        className="flex-1 px-2.5 py-1.5 text-xs bg-zinc-800 border border-zinc-700 rounded-md"
                       />
                       <input
                         type="text"
-                        placeholder="Institution"
-                        value={edu.institution}
+                        placeholder="GPA (optional)"
+                        value={edu.gpa || ""}
                         onChange={(e) => {
                           const copy = [...resume.educations];
-                          copy[eduIdx].institution = e.target.value;
+                          copy[eduIdx].gpa = e.target.value;
                           setResume({ ...resume, educations: copy });
                         }}
-                        className="px-2.5 py-1.5 text-xs bg-zinc-800 border border-zinc-700 rounded-md"
+                        className="w-24 px-2.5 py-1.5 text-xs bg-zinc-800 border border-zinc-700 rounded-md"
                       />
                     </div>
-                    <div className="flex items-center gap-1">
-                      <button
-                        onClick={() =>
-                          setResume({
-                            ...resume,
-                            educations: moveItem(resume.educations, eduIdx, "up"),
-                          })
-                        }
-                        disabled={eduIdx === 0}
-                        className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700/60 rounded disabled:opacity-20 transition"
-                        title="Move Up"
-                      >
-                        <ChevronUp className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={() =>
-                          setResume({
-                            ...resume,
-                            educations: moveItem(resume.educations, eduIdx, "down"),
-                          })
-                        }
-                        disabled={eduIdx === resume.educations.length - 1}
-                        className="p-1.5 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-700/60 rounded disabled:opacity-20 transition"
-                        title="Move Down"
-                      >
-                        <ChevronDown className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={() => {
-                          const filtered = resume.educations.filter((item) => item.id !== edu.id);
-                          setResume({ ...resume, educations: filtered });
-                        }}
-                        className="p-1.5 text-zinc-500 hover:text-red-400 rounded-md ml-1 transition"
-                        title="Remove"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
                   </div>
-                  <input
-                    type="text"
-                    placeholder="Field of Study"
-                    value={edu.fieldOfStudy}
-                    onChange={(e) => {
-                      const copy = [...resume.educations];
-                      copy[eduIdx].fieldOfStudy = e.target.value;
-                      setResume({ ...resume, educations: copy });
-                    }}
-                    className="w-full px-2.5 py-1.5 text-xs bg-zinc-800 border border-zinc-700 rounded-md"
-                  />
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      placeholder="Start - End"
-                      value={`${edu.startDate} - ${edu.endDate}`}
-                      onChange={(e) => {
-                        const parts = e.target.value.split("-").map((s) => s.trim());
-                        const copy = [...resume.educations];
-                        copy[eduIdx].startDate = parts[0] || "";
-                        copy[eduIdx].endDate = parts[1] || "";
-                        setResume({ ...resume, educations: copy });
-                      }}
-                      className="flex-1 px-2.5 py-1.5 text-xs bg-zinc-800 border border-zinc-700 rounded-md"
-                    />
-                    <input
-                      type="text"
-                      placeholder="GPA (optional)"
-                      value={edu.gpa || ""}
-                      onChange={(e) => {
-                        const copy = [...resume.educations];
-                        copy[eduIdx].gpa = e.target.value;
-                        setResume({ ...resume, educations: copy });
-                      }}
-                      className="w-24 px-2.5 py-1.5 text-xs bg-zinc-800 border border-zinc-700 rounded-md"
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
+                                  );
+              })}
+                                </div>
           )}
 
-          {/* LAYOUT DRAG & DROP TAB */}
-          {activeTab === "layout" && (
-            <DraggableSectionOrder
-              sectionOrder={resume.sectionOrder}
-              disabledSections={resume.disabledSections || []}
-              onChangeOrder={(newOrder) => setResume({ ...resume, sectionOrder: newOrder })}
-              onToggleSection={handleToggleSection}
-              onEnableAll={() => setResume({ ...resume, disabledSections: [] })}
-              onResetOrder={() =>
-                setResume({
-                  ...resume,
-                  sectionOrder: ["summary", "workExperiences", "skills", "projects", "educations"],
-                })
-              }
-            />
-          )}
+                                {/* LAYOUT DRAG & DROP TAB */}
+                                {activeTab === "layout" && (
+                                  <DraggableSectionOrder
+                                    sectionOrder={resume.sectionOrder}
+                                    disabledSections={resume.disabledSections || []}
+                                    onChangeOrder={(newOrder) => setResume({ ...resume, sectionOrder: newOrder })}
+                                    onToggleSection={handleToggleSection}
+                                    onEnableAll={() => setResume({ ...resume, disabledSections: [] })}
+                                    onResetOrder={() =>
+                                      setResume({
+                                        ...resume,
+                                        sectionOrder: ["summary", "workExperiences", "skills", "projects", "educations"],
+                                      })
+                                    }
+                                  />
+                                )}
 
-          {/* TYPOGRAPHY & FONT TAB */}
-          {activeTab === "typography" && (
-            <TypographyModal
-              resume={resume}
-              onChange={(updated) => setResume(updated)}
-            />
-          )}
-        </div>
-      )}
-      </section>
+                                {/* TYPOGRAPHY & FONT TAB */}
+                                {activeTab === "typography" && (
+                                  <TypographyModal
+                                    resume={resume}
+                                    onChange={(updated) => setResume(updated)}
+                                  />
+                                )}
+                              </div>
+                            )}
+                          </section>
 
       {/* Resize Splitter Divider Handle */}
-      <div
-        onMouseDown={startResizing}
-        onDoubleClick={() => setEditorWidth(520)}
-        title="Drag horizontally to resize editor (Double-click to reset to 520px)"
-        className={`group relative w-2 shrink-0 cursor-col-resize select-none flex items-center justify-center transition-colors z-30 ${
-          isResizing
-            ? "bg-sky-500 shadow-md shadow-sky-500/30"
-            : "bg-zinc-900 hover:bg-sky-500/80 border-r border-zinc-800"
-        }`}
-      >
-        <div className="w-0.5 h-8 rounded-full bg-zinc-700 group-hover:bg-white transition-colors" />
-      </div>
+                        <div
+                          onMouseDown={startResizing}
+                          onDoubleClick={() => setEditorWidth(520)}
+                          title="Drag horizontally to resize editor (Double-click to reset to 520px)"
+                          className={`group relative w-2 shrink-0 cursor-col-resize select-none flex items-center justify-center transition-colors z-30 ${isResizing
+                              ? "bg-sky-500 shadow-md shadow-sky-500/30"
+                              : "bg-zinc-900 hover:bg-sky-500/80 border-r border-zinc-800"
+                            }`}
+                        >
+                          <div className="w-0.5 h-8 rounded-full bg-zinc-700 group-hover:bg-white transition-colors" />
+                        </div>
 
-      {/* 3. Right Real PDF Viewport (Takes remaining width and 100% viewport height, no outside scrolling) */}
-      <section className="flex-1 h-full bg-zinc-950 p-4 flex flex-col items-center justify-center overflow-hidden relative">
-        {/* Invisible dragging overlay prevents iframe from capturing mouse pointer */}
-        {isResizing && (
-          <div className="absolute inset-0 z-50 cursor-col-resize select-none bg-transparent pointer-events-auto" />
-        )}
-        <div className="w-full h-full max-w-[950px] flex flex-col items-center justify-center">
-          <RealPdfViewer resume={resume} customLatex={resume.customLatex} />
-        </div>
-      </section>
+                        {/* 3. Right Real PDF Viewport (Takes remaining width and 100% viewport height, no outside scrolling) */}
+                        <section className="flex-1 h-full bg-zinc-950 p-4 flex flex-col items-center justify-center overflow-hidden relative">
+                          {/* Invisible dragging overlay prevents iframe from capturing mouse pointer */}
+                          {isResizing && (
+                            <div className="absolute inset-0 z-50 cursor-col-resize select-none bg-transparent pointer-events-auto" />
+                          )}
+                          <div className="w-full h-full max-w-[950px] flex flex-col items-center justify-center">
+                            <RealPdfViewer resume={resume} customLatex={resume.customLatex} />
+                          </div>
+                        </section>
 
-      {/* AI Job Tailoring Modal (Gemini) */}
-      <GeminiSkillsTailorModal
-        isOpen={isGeminiTailorOpen}
-        onClose={() => setIsGeminiTailorOpen(false)}
-        currentSkills={resume.skills}
-        jobTitle={resume.personalInfo.jobTitle}
-        onApplySkills={(newSkills) => setResume({ ...resume, skills: newSkills })}
-      />
+                        {/* AI Job Tailoring Modal (Gemini) */}
+                        <GeminiSkillsTailorModal
+                          isOpen={isGeminiTailorOpen}
+                          onClose={() => setIsGeminiTailorOpen(false)}
+                          currentSkills={resume.skills}
+                          jobTitle={resume.personalInfo.jobTitle}
+                          onApplySkills={(newSkills) => setResume({ ...resume, skills: newSkills })}
+                        />
 
-      {/* Manual Skill Catalog Checklist Modal */}
-      <SkillCatalogModal
-        isOpen={isSkillCatalogOpen}
-        onClose={() => setIsSkillCatalogOpen(false)}
-        currentSkills={resume.skills}
-        onUpdateSkills={(updatedSkills) => setResume({ ...resume, skills: updatedSkills })}
-      />
-    </div>
-  );
+                        {/* Manual Skill Catalog Checklist Modal */}
+                        <SkillCatalogModal
+                          isOpen={isSkillCatalogOpen}
+                          onClose={() => setIsSkillCatalogOpen(false)}
+                          currentSkills={resume.skills}
+                          onUpdateSkills={(updatedSkills) => setResume({ ...resume, skills: updatedSkills })}
+                        />
+                      </div>
+                    );
 }

@@ -126,8 +126,8 @@ export function generateLatexDocument(resume: ResumeData): string {
     contactLinks.push(`\\pdflink{${targetUrl}}{${displayGithub}}`);
   }
 
-  const contactLine = contactLinks.length > 0 
-    ? `{\\small\\color{subtext} ${contactLinks.join(" \\ $|$ \\ ")}}` 
+  const contactLine = contactLinks.length > 0
+    ? `{\\small\\color{subtext} ${contactLinks.join(" \\ $|$ \\ ")}}`
     : "";
 
   // Section generators
@@ -141,140 +141,149 @@ ${escapeLatex(resume.summary.trim())}
 
   const renderWorkExperience = (): string => {
     if (!resume.workExperiences || resume.workExperiences.length === 0) return "";
-    const items = resume.workExperiences.map((w) => {
-      const dates = [w.startDate, w.current ? "Present" : w.endDate].filter(Boolean).join(" -- ");
-      const company = escapeLatex(w.company);
-      const position = escapeLatex(w.position);
-      const location = escapeLatex(w.location);
+      const activeExperiences = resume.workExperiences.filter((w) => !w.disabled);
+      if (activeExperiences.length === 0) return "";
 
-      const bullets = (w.highlights || [])
-        .map((h) => h.trim())
-        .filter(Boolean)
-        .map((h) => `    \\item ${escapeLatex(h)}`)
-        .join("\n");
+      const items = activeExperiences.map((w) => {
+        const dates = [w.startDate, w.current ? "Present" : w.endDate].filter(Boolean).join(" -- ");
+        const company = escapeLatex(w.company);
+        const position = escapeLatex(w.position);
+        const location = escapeLatex(w.location);
 
-      return `
+        const bullets = (w.highlights || [])
+          .map((h) => h.trim())
+          .filter(Boolean)
+          .map((h) => `    \\item ${escapeLatex(h)}`)
+          .join("\n");
+
+        return `
 \\resumeSubheading{${position}}{${escapeLatex(dates)}}{${company}}{${location}}
 ${bullets ? `\\begin{resumeItemList}\n${bullets}\n\\end{resumeItemList}` : "\\vspace{2pt}"}
 `;
-    }).join("\n");
+      }).join("\n");
 
-    return `
+      return `
 \\resumesection{Work Experience}
 ${items}
 `;
-  };
+    };
 
-  const renderEducation = (): string => {
-    if (!resume.educations || resume.educations.length === 0) return "";
-    const items = resume.educations.map((edu) => {
-      const dates = [edu.startDate, edu.endDate].filter(Boolean).join(" -- ");
-      const degreeLine = [edu.degree, edu.fieldOfStudy].filter(Boolean).join(", ");
-      const degreeText = escapeLatex(degreeLine);
-      const institution = escapeLatex(edu.institution);
-      const location = escapeLatex(edu.location);
+    const renderEducation = (): string => {
+      if (!resume.educations || resume.educations.length === 0) return "";
+        const activeEducations = resume.educations.filter((edu) => !edu.disabled);
+        if (activeEducations.length === 0) return "";
 
-      const extraNotes: string[] = [];
-      if (edu.gpa) {
-        extraNotes.push(`GPA: ${escapeLatex(edu.gpa)}`);
-      }
-      if (edu.honors && edu.honors.length > 0) {
-        extraNotes.push(`Honors: ${escapeLatex(edu.honors.join(", "))}`);
-      }
+        const items = activeEducations.map((edu) => {
+          const dates = [edu.startDate, edu.endDate].filter(Boolean).join(" -- ");
+          const degreeLine = [edu.degree, edu.fieldOfStudy].filter(Boolean).join(", ");
+          const degreeText = escapeLatex(degreeLine);
+          const institution = escapeLatex(edu.institution);
+          const location = escapeLatex(edu.location);
 
-      const noteBullets = extraNotes
-        .map((note) => `    \\item ${note}`)
-        .join("\n");
+          const extraNotes: string[] = [];
+          if (edu.gpa) {
+            extraNotes.push(`GPA: ${escapeLatex(edu.gpa)}`);
+          }
+          if (edu.honors && edu.honors.length > 0) {
+            extraNotes.push(`Honors: ${escapeLatex(edu.honors.join(", "))}`);
+          }
 
-      return `
+          const noteBullets = extraNotes
+            .map((note) => `    \\item ${note}`)
+            .join("\n");
+
+          return `
 \\resumeSubheading{${institution}}{${escapeLatex(dates)}}{${degreeText}}{${location}}
 ${noteBullets ? `\\begin{resumeItemList}\n${noteBullets}\n\\end{resumeItemList}` : "\\vspace{2pt}"}
 `;
-    }).join("\n");
+        }).join("\n");
 
-    return `
+        return `
 \\resumesection{Education}
 ${items}
 `;
-  };
+      };
 
-  const renderProjects = (): string => {
-    if (!resume.projects || resume.projects.length === 0) return "";
-    const items = resume.projects.map((proj) => {
-      const name = escapeLatex(proj.name);
-      const tech = proj.technologies && proj.technologies.length > 0
-        ? escapeLatex(proj.technologies.join(", "))
-        : "";
-      
-      const linkLabel = proj.link ? escapeLatex(formatDisplayUrl(proj.link)) : "";
-      const linkUrl = proj.link ? escapeLatexUrl(proj.link) : "";
-      const linkCmd = proj.link ? `\\pdflink{${linkUrl}}{${linkLabel}}` : "";
+      const renderProjects = (): string => {
+        if (!resume.projects || resume.projects.length === 0) return "";
+          const activeProjects = resume.projects.filter((proj) => !proj.disabled);
+          if (activeProjects.length === 0) return "";
 
-      const bullets: string[] = [];
-      if (proj.description && proj.description.trim()) {
-        bullets.push(`    \\item ${escapeLatex(proj.description.trim())}`);
-      }
-      if (proj.highlights && proj.highlights.length > 0) {
-        proj.highlights
-          .map((h) => h.trim())
-          .filter(Boolean)
-          .forEach((h) => bullets.push(`    \\item ${escapeLatex(h)}`));
-      }
+          const items = activeProjects.map((proj) => {
+            const name = escapeLatex(proj.name);
+            const tech = proj.technologies && proj.technologies.length > 0
+              ? escapeLatex(proj.technologies.join(", "))
+              : "";
 
-      return `
+            const linkLabel = proj.link ? escapeLatex(formatDisplayUrl(proj.link)) : "";
+            const linkUrl = proj.link ? escapeLatexUrl(proj.link) : "";
+            const linkCmd = proj.link ? `\\pdflink{${linkUrl}}{${linkLabel}}` : "";
+
+            const bullets: string[] = [];
+            if (proj.description && proj.description.trim()) {
+              bullets.push(`    \\item ${escapeLatex(proj.description.trim())}`);
+            }
+            if (proj.highlights && proj.highlights.length > 0) {
+              proj.highlights
+                .map((h) => h.trim())
+                .filter(Boolean)
+                .forEach((h) => bullets.push(`    \\item ${escapeLatex(h)}`));
+            }
+
+            return `
 \\resumeProjectHeading{${name}}{${linkCmd}}{${tech ? `Technologies: ${tech}` : ""}}
 ${bullets.length > 0 ? `\\begin{resumeItemList}\n${bullets.join("\n")}\n\\end{resumeItemList}` : "\\vspace{2pt}"}
 `;
-    }).join("\n");
+          }).join("\n");
 
-    return `
+          return `
 \\resumesection{Projects}
 ${items}
 `;
-  };
+        };
 
-  const renderSkills = (): string => {
-    if (!resume.skills || resume.skills.length === 0) return "";
-    const activeSkills = resume.skills.filter((skillGroup) => !skillGroup.disabled);
-    if (activeSkills.length === 0) return "";
+        const renderSkills = (): string => {
+          if (!resume.skills || resume.skills.length === 0) return "";
+          const activeSkills = resume.skills.filter((skillGroup) => !skillGroup.disabled);
+          if (activeSkills.length === 0) return "";
 
-    const rows = activeSkills.map((skillGroup) => {
-      const category = escapeLatex(skillGroup.categoryName);
-      const items = escapeLatex(skillGroup.items.join(", "));
-      return `\\textbf{${category}:} ${items} \\\\`;
-    }).join("\n");
+          const rows = activeSkills.map((skillGroup) => {
+            const category = escapeLatex(skillGroup.categoryName);
+            const items = escapeLatex(skillGroup.items.join(", "));
+            return `\\textbf{${category}:} ${items} \\\\`;
+          }).join("\n");
 
-    return `
+          return `
 \\resumesection{Skills \\& Technologies}
 \\vspace{1pt}
 ${rows}
 \\vspace{2pt}
 `;
-  };
+        };
 
-  // Build sections according to user's defined sectionOrder (skipping disabled categories)
-  const sectionRenderers: Record<string, () => string> = {
-    summary: renderSummary,
-    workExperiences: renderWorkExperience,
-    work: renderWorkExperience,
-    experience: renderWorkExperience,
-    educations: renderEducation,
-    education: renderEducation,
-    projects: renderProjects,
-    skills: renderSkills,
-  };
+        // Build sections according to user's defined sectionOrder (skipping disabled categories)
+        const sectionRenderers: Record<string, () => string> = {
+          summary: renderSummary,
+          workExperiences: renderWorkExperience,
+          work: renderWorkExperience,
+          experience: renderWorkExperience,
+          educations: renderEducation,
+          education: renderEducation,
+          projects: renderProjects,
+          skills: renderSkills,
+        };
 
-  const disabledSet = new Set(resume.disabledSections || []);
+        const disabledSet = new Set(resume.disabledSections || []);
 
-  const renderedSections = (resume.sectionOrder || ["summary", "workExperiences", "skills", "projects", "educations"])
-    .filter((key) => !disabledSet.has(key))
-    .map((key) => sectionRenderers[key]?.() || "")
-    .filter(Boolean)
-    .join("\n");
+        const renderedSections = (resume.sectionOrder || ["summary", "workExperiences", "skills", "projects", "educations"])
+          .filter((key) => !disabledSet.has(key))
+          .map((key) => sectionRenderers[key]?.() || "")
+          .filter(Boolean)
+          .join("\n");
 
-  const fontDirectives = getFontPackageDirective(typo.fontFamily || "Helvetica");
+        const fontDirectives = getFontPackageDirective(typo.fontFamily || "Helvetica");
 
-  return `%--------------------------------------------------------------------------------
+        return `%--------------------------------------------------------------------------------
 % Resumix LaTeX Resume Builder
 % Compiled with pdfTeX (Zero external dependencies)
 %--------------------------------------------------------------------------------
@@ -366,4 +375,4 @@ ${renderedSections}
 
 \\end{document}
 `;
-}
+      }

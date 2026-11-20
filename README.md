@@ -39,8 +39,10 @@
 - **Section Header Banners:** Toggle category visibility directly from within any section editor tab.
 - **Quick Actions:** One-click **Enable All** and **Reset Order** to restore standard layout.
 
-### ✍️ Visual Form Editor & AI Polisher
+### ✍️ Visual Form Editor & Master Experience Hub
 - **Structured Form Inputs:** Dedicated editors for Personal Details, Professional Summary, Work Experience, Skills, Projects, and Education.
+- **Per-Item Show/Hide Toggles (`Eye` / `EyeOff`):** Maintain a full master repository of past jobs, projects, and degrees. Toggle individual experiences and projects on or off with a single click to tailor the resume for specific job applications without deleting any history.
+- **Active Visibility Badges & Quick Show All:** Each section header displays a live count of included entries (e.g. *3 of 7 visible in PDF*) with a one-click *Show All* button to restore visibility.
 - **Item Reordering:** Move individual work experience, project, and education entries up and down with dedicated controls.
 - **AI Bullet Enhancer:** Transform bullet points with strong active verbs and quantifiable impact.
 - **Typography & Font Customizer:** Adjust font family (*Helvetica*, *Times*, *Courier*), font sizes, and section line dividers in real time.

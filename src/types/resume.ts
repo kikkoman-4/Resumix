@@ -18,6 +18,7 @@ export interface WorkExperience {
   endDate: string;
   current: boolean;
   highlights: string[];
+  disabled?: boolean;
 }
 
 export interface Education {
@@ -30,6 +31,7 @@ export interface Education {
   endDate: string;
   gpa?: string;
   honors?: string[];
+  disabled?: boolean;
 }
 
 export interface Project {
@@ -39,6 +41,7 @@ export interface Project {
   technologies: string[];
   link?: string;
   highlights: string[];
+  disabled?: boolean;
 }
 
 export interface SkillCategory {
